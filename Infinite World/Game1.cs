@@ -11,10 +11,12 @@ namespace Infinite_World
     public class Game1 : Game
     {
         Texture2D grass;
+        Texture2D map;
+        Vector2 mapDimensions;
         float[,] heatMap;
+        Color[] colours;
         Random generator = new Random();
-        Plot plt = new ScottPlot.Plot(512, 512);
-        float[] xAxis, yAxis;
+        int scrollValue;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -34,8 +36,12 @@ namespace Infinite_World
             _graphics.PreferredBackBufferWidth = 512;
             _graphics.ApplyChanges();
 
+            mapDimensions = new Vector2(512, 512);
+            heatMap = Noise.GenerateNoiseMap(11111, mapDimensions, 2.0f);
+            colours = Noise.GenerateColourMap(heatMap);
 
-            
+            scrollValue = 0;
+
             base.Initialize();
         }
 
@@ -45,6 +51,8 @@ namespace Infinite_World
 
             // TODO: use this.Content to load your game content here
             grass = Content.Load<Texture2D>("Grass");
+            map = new Texture2D(GraphicsDevice, (int)mapDimensions.X, (int)mapDimensions.Y);
+            map.SetData(colours);
         }
 
         protected override void Update(GameTime gameTime)
@@ -52,7 +60,23 @@ namespace Infinite_World
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            //Too slow
+            //heatMap = Noise.GenerateNoiseMap(11111, mapDimensions, 2.0f);
+            //colours = Noise.GenerateColourMap(heatMap);
+            //map.SetData(colours);
+
+            if (Mouse.GetState().ScrollWheelValue != scrollValue)
+            {
+                scrollValue = Mouse.GetState().ScrollWheelValue;
+                Debug.WriteLine(scrollValue);
+                float scale = Mouse.GetState().ScrollWheelValue / -120;
+                if (scale < 0)
+                {
+                    scale = 1;
+                }
+                updateMap(10 / scale);
+            }
+
             base.Update(gameTime);
         }
 
@@ -60,14 +84,20 @@ namespace Infinite_World
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
             _spriteBatch.Begin();
 
-
+            _spriteBatch.Draw(map, new Rectangle(0, 0, (int)mapDimensions.X, (int)mapDimensions.Y), Color.White);
             
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void updateMap(float scale)
+        {
+            heatMap = Noise.GenerateNoiseMap(11111, mapDimensions, scale);
+            colours = Noise.GenerateColourMap(heatMap);
+            map.SetData(colours);
         }
 
     }
