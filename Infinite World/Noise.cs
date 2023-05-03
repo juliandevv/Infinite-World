@@ -67,11 +67,7 @@ namespace Infinite_World
                 for (int y = 0; y < height; y++)
                 {
                     float factor = noiseMap[x, y];
-                    //if (factor < 0.5f)
-                    //{
-                    //    colours[y * width + x] = Color.Lerp(Color.White, Color.Red, factor);
-                    //}
-                    colours[y * width + x] = Color.Lerp(Color.Black, Color.White, factor);
+                    colours[y * width + x] = Color.Lerp(Color.White, Color.Black, factor);
                 }
             }
 
