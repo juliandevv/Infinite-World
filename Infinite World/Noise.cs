@@ -10,7 +10,7 @@ namespace Infinite_World
 {
     internal class Noise
     {
-        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, float scale)
+        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, float scale, Vector2 offsets)
         {
             float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
@@ -25,17 +25,17 @@ namespace Infinite_World
             {
                 for (int y = 0; y < dimensions.Y; y++)
                 {
-                    float sampleX = x / scale;
-                    float sampleY = y / scale;
+                    float sampleX = (x / scale) + offsets.X;
+                    float sampleY = (y / scale) + offsets.Y;
 
                     noiseMap[x,y] = noise.GetNoise(sampleX, sampleY);
                 }
             }
 
-            return noiseMap;
+            return Normalize(noiseMap);
         }
 
-        public float[,] Normalize(float[,] noiseMap)
+        public static float[,] Normalize(float[,] noiseMap)
         {
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
@@ -53,62 +53,6 @@ namespace Infinite_World
             }
 
             return noiseMap;
-        }
-
-        public static Color[] GenerateColourMap(float[,] noiseMap)
-        {
-            int width = noiseMap.GetLength(0);
-            int height = noiseMap.GetLength(1);
-
-            Color[] colours = new Color[width * height];
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    float factor = noiseMap[x, y];
-                    colours[y * width + x] = Color.Lerp(Color.White, Color.Black, factor);
-                }
-            }
-
-            return colours;
-        }
-
-        private static float LinearStep(float x, float start, float width = 0.2f)
-        {
-            if (x < start)
-                return 0f;
-            else if (x > start + width)
-                return 1;
-            else
-                return (x - start) / width;
-        }
-
-        private static float GetRedValue(float intensity)
-        {
-            return LinearStep(intensity, 0.5f);
-        }
-
-        private static float GetGreenValue(float intensity)
-        {
-            return LinearStep(intensity, 0.2f);
-        }
-
-        private static float GetBlueValue(float intensity)
-        {
-            return LinearStep(intensity, 0f)
-            - LinearStep(intensity, 0.3f)
-            + LinearStep(intensity, 0.7f);
-        }
-
-        private static Color getColor(float intensity)
-        {
-            return new Color(
-                (int)(255 * GetRedValue(intensity)),
-                (int)(255 * GetGreenValue(intensity)),
-                (int)(255 * GetBlueValue(intensity)),
-                255
-                );
         }
     }
 }
