@@ -35,8 +35,8 @@ namespace Infinite_World
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
 
-            Texture2D texture = new Texture2D(graphics, width, height);
-            Color[] colours = new Color[width * height];
+            Texture2D texture = new Texture2D(graphics, width * 8, height * 8);
+            Color[] colours = new Color[width * height * 64];
 
             for (int x = 0; x < width; x++)
             {
@@ -52,7 +52,7 @@ namespace Infinite_World
                         {
                             //Debug.WriteLine(true);
                             //Debug.WriteLine(tile.Colour);
-                            colours[y * width + x] = tile.Colour;
+                            tile.Raw.CopyTo(colours, (y * width +x) * 64);
                         }
                         
                     }

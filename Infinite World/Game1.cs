@@ -14,9 +14,11 @@ namespace Infinite_World
         // TEXTURES
         Texture2D grass;
         Texture2D map;
+        Texture2D grassTile, shallowWaterTile, deepWaterTile;
 
         // MAP
         Vector2 mapDimensions;
+        Vector2 noiseMapDimensions;
         Vector2 offsets;
         float[,] heatMap;
         List<Tile> tiles = new List<Tile>();
@@ -47,21 +49,24 @@ namespace Infinite_World
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.ApplyChanges();
 
-            tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue));
-            tiles.Add(new Tile(new Vector2(0.35f, 0.55f), Color.CornflowerBlue));
-            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), Color.Beige));
-            tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green));
-            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black));
-
-            mapDimensions = new Vector2(2500, 2500);
+            noiseMapDimensions = new Vector2(100, 100);
+            mapDimensions = noiseMapDimensions * 8;
             offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
 
             Debug.WriteLine(tiles.Count);
 
-            heatMap = Noise.GenerateNoiseMap(11311, mapDimensions, 10.0f);
-
+            heatMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 10.0f);
 
             base.Initialize();
+
+            tiles.Add(new Tile(new Vector2(0.0f, 0.5f), Color.Blue, grassTile));
+            tiles.Add(new Tile(new Vector2(0.5f, 0.8f), Color.CornflowerBlue, shallowWaterTile));
+            tiles.Add(new Tile(new Vector2(0.8f, 1.5f), Color.Beige, deepWaterTile));
+            //tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green));
+            //tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black));
+
+            map = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice);
+
         }
 
         protected override void LoadContent()
@@ -69,10 +74,11 @@ namespace Infinite_World
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             grass = Content.Load<Texture2D>("Grass");
-            //map = new Texture2D(GraphicsDevice, (int)mapDimensions.X, (int)mapDimensions.Y);
-            //map.SetData(colours);
+            grassTile = Content.Load<Texture2D>(@"Tiles\GrassTile");
+            shallowWaterTile = Content.Load<Texture2D>(@"Tiles\ShallowWaterTile");
+            deepWaterTile = Content.Load<Texture2D>(@"Tiles\DeepWaterTile");
 
-            map = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice);
+
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
 
@@ -108,7 +114,7 @@ namespace Infinite_World
 
         protected override void Draw(GameTime gameTime)
         {
-            renderScale = 1f / (720f / _graphics.GraphicsDevice.Viewport.Height);
+            //renderScale = 1f / (720f / _graphics.GraphicsDevice.Viewport.Height);
 
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -125,18 +131,14 @@ namespace Infinite_World
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(renderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, renderScale, SpriteEffects.None, 0f);
+            //_spriteBatch.Draw(renderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, renderScale, SpriteEffects.None, 0f);
+            _spriteBatch.Draw(renderTarget, new Rectangle(0, 0, 1920, 1080), Color.White);
 
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        public void updateMap(float scale, Vector2 offsets)
-        {
-            //heatMap = Noise.GenerateNoiseMap(11111, mapDimensions, scale, offsets);
-            //map = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice);
-        }
-
+        
     }
 }

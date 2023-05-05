@@ -50,7 +50,7 @@ namespace Infinite_World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseMap[x, y] = noiseMap[x, y] - min / range;
+                    noiseMap[x, y] = (noiseMap[x, y] - min / range) * 10f;
                 }
             }
 
