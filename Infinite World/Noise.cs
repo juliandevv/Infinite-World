@@ -10,15 +10,17 @@ namespace Infinite_World
 {
     internal class Noise
     {
-        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, float scale, Vector2 offsets)
+        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, float scale)
         {
+            Vector2 offsets = new Vector2(0, 0);
             float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
-            noise.SetFrequency(0.05f);
+            noise.SetFrequency(0.02f);
+            noise.SetFractalOctaves(4);
             noise.SetFractalLacunarity(2f);
-            noise.SetFractalGain(0.5f);
+            noise.SetFractalGain(0.3f);
             noise.SetFractalType(FastNoiseLite.FractalType.FBm);
 
             for (int x = 0; x < dimensions.X; x++)

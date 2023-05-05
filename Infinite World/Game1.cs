@@ -11,16 +11,25 @@ namespace Infinite_World
 {
     public class Game1 : Game
     {
+        // TEXTURES
         Texture2D grass;
         Texture2D map;
+
+        // MAP
         Vector2 mapDimensions;
         Vector2 offsets;
         float[,] heatMap;
-        Color[] colours;
         List<Tile> tiles = new List<Tile>();
-        Random generator = new Random();
-        int scrollValue;
+
+        // INPUT
         KeyboardState keyboardState;
+
+        // GRAPHICS
+        RenderTarget2D renderTarget;
+        float renderScale = 0.44444f;
+
+        //MISC
+        Random generator = new Random();
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -34,10 +43,8 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
-            _graphics.PreferredBackBufferHeight = 512;
-            _graphics.PreferredBackBufferWidth = 512;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.PreferredBackBufferWidth = 1280;
             _graphics.ApplyChanges();
 
             tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue));
@@ -46,14 +53,13 @@ namespace Infinite_World
             tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green));
             tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black));
 
-            offsets = new Vector2(30, 20);
+            mapDimensions = new Vector2(2500, 2500);
+            offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
 
             Debug.WriteLine(tiles.Count);
 
-            mapDimensions = new Vector2(512, 512);
-            heatMap = Noise.GenerateNoiseMap(11311, mapDimensions, 10.0f, offsets);
+            heatMap = Noise.GenerateNoiseMap(11311, mapDimensions, 10.0f);
 
-            scrollValue = 0;
 
             base.Initialize();
         }
@@ -62,12 +68,13 @@ namespace Infinite_World
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             grass = Content.Load<Texture2D>("Grass");
             //map = new Texture2D(GraphicsDevice, (int)mapDimensions.X, (int)mapDimensions.Y);
             //map.SetData(colours);
 
             map = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice);
+
+            renderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
 
         }
 
@@ -77,35 +84,49 @@ namespace Infinite_World
                 Exit();
 
             keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(Keys.Left))
+            if(keyboardState.IsKeyDown(Keys.Left))
             {
-                offsets.X += 1;
-                updateMap(10, offsets);
+                offsets.X += 5;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                offsets.X -= 5; 
+            }
+            else if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                offsets.Y += 5;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                offsets.Y -= 5;
             }
 
-            //if (Mouse.GetState().ScrollWheelValue != scrollValue)
-            //{
-            //    scrollValue = Mouse.GetState().ScrollWheelValue;
-            //    Debug.WriteLine(scrollValue);
-            //    float scale = Mouse.GetState().ScrollWheelValue / -120;
-            //    if (scale < 0)
-            //    {
-            //        scale = 1;
-            //    }
-            //    updateMap(10 / scale);
-            //}
+
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            renderScale = 1f / (720f / _graphics.GraphicsDevice.Viewport.Height);
+
+            GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(map, new Rectangle(0, 0, (int)mapDimensions.X, (int)mapDimensions.Y), Color.White);
-            
+            //_spriteBatch.Draw(map, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
+            _spriteBatch.Draw(map, offsets, Color.White);
+
+            _spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            _spriteBatch.Begin();
+
+            _spriteBatch.Draw(renderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, renderScale, SpriteEffects.None, 0f);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -113,8 +134,8 @@ namespace Infinite_World
 
         public void updateMap(float scale, Vector2 offsets)
         {
-            heatMap = Noise.GenerateNoiseMap(11111, mapDimensions, scale, offsets);
-            map = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice);
+            //heatMap = Noise.GenerateNoiseMap(11111, mapDimensions, scale, offsets);
+            //map = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice);
         }
 
     }
