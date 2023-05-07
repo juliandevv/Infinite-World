@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,8 @@ namespace Infinite_World
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
-            noise.SetFrequency(0.02f);
+            //dont change these look good
+            noise.SetFrequency(0.05f);
             noise.SetFractalOctaves(4);
             noise.SetFractalLacunarity(2f);
             noise.SetFractalGain(0.3f);
@@ -43,14 +45,16 @@ namespace Infinite_World
             int height = noiseMap.GetLength(1);
 
             float max = noiseMap.Cast<float>().Max();
+            //Debug.WriteLine(max);
             float min = noiseMap.Cast<float>().Min();
+            //Debug.WriteLine(min);
             float range = max - min;
 
             for(int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseMap[x, y] = (noiseMap[x, y] - min / range) * 10f;
+                    noiseMap[x, y] = ((noiseMap[x, y] - min) / range);
                 }
             }
 
