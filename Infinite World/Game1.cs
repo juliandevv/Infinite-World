@@ -21,11 +21,15 @@ namespace Infinite_World
         Vector2 mapDimensions;
         Vector2 noiseMapDimensions;
         Vector2 offsets;
+        float zoom;
         float[,] heatMap;
         List<Tile> tiles = new List<Tile>();
 
         // INPUT
         KeyboardState keyboardState;
+        MouseState mouseState;
+        int lastScrollValue;
+        int scrollValue;
 
         // GRAPHICS
         RenderTarget2D renderTarget;
@@ -46,13 +50,16 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = 720;
-            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 480;
+            _graphics.PreferredBackBufferWidth = 640;
             _graphics.ApplyChanges();
 
             noiseMapDimensions = new Vector2(300, 300);
             mapDimensions = noiseMapDimensions * 8;
             offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
+            scrollValue = 120;
+            lastScrollValue = 0;
+            zoom = 1;
 
             Debug.WriteLine(tiles.Count);
 
@@ -60,11 +67,11 @@ namespace Infinite_World
 
             base.Initialize();
 
-            tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue, grassTile));
+            tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue, deepWaterTile));
             tiles.Add(new Tile(new Vector2(0.35f, 0.55f), Color.CornflowerBlue, shallowWaterTile));
-            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), Color.Beige, deepWaterTile));
-            tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green, deepWaterTile));
-            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black, deepWaterTile));
+            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), Color.Beige, grassTile));
+            tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green, grassTile));
+            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black, grassTile));
 
             tileMap = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice, _spriteBatch);
             map = Map.GenerateColourMap(heatMap, tiles, GraphicsDevice);
@@ -92,7 +99,9 @@ namespace Infinite_World
                 Exit();
 
             keyboardState = Keyboard.GetState();
-            if(keyboardState.IsKeyDown(Keys.Left))
+            mouseState = Mouse.GetState();
+
+            if (keyboardState.IsKeyDown(Keys.Left))
             {
                 offsets.X += 5;
             }
@@ -109,8 +118,26 @@ namespace Infinite_World
                 offsets.Y -= 5;
             }
 
+            
+            scrollValue = mouseState.ScrollWheelValue;
+            if (scrollValue < 0)
+            {
+                scrollValue *= -1;
+            }
 
+            if (scrollValue != lastScrollValue)
+            {
+                Debug.WriteLine(lastScrollValue);
+                Debug.WriteLine(scrollValue);
 
+                zoom = 1 + (scrollValue/240);
+                mapDimensions = noiseMapDimensions * 8;
+                mapDimensions *= zoom;
+                lastScrollValue = scrollValue;
+            }
+
+            
+           
             base.Update(gameTime);
         }
 
@@ -138,7 +165,7 @@ namespace Infinite_World
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(tileMap, offsets, Color.White);
+            _spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
             _spriteBatch.Draw(map, new Vector2(800, 0), Color.White);
 
 
