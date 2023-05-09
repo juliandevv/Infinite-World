@@ -15,7 +15,8 @@ namespace Infinite_World
         Texture2D grass;
         Texture2D map;
         RenderTarget2D tileMap;
-        Texture2D grassTile, shallowWaterTile, deepWaterTile;
+        Texture2D grassTile, shallowWaterTile, deepWaterTile, sandTile, mountainTile;
+        List<Texture2D> trees = new List<Texture2D>();
 
         // MAP
         Vector2 mapDimensions;
@@ -24,6 +25,7 @@ namespace Infinite_World
         float zoom;
         float[,] heatMap;
         List<Tile> tiles = new List<Tile>();
+        List<Feature> features = new List<Feature>();
 
         // INPUT
         KeyboardState keyboardState;
@@ -50,8 +52,8 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = 480;
-            _graphics.PreferredBackBufferWidth = 640;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.PreferredBackBufferWidth = 1280;
             _graphics.ApplyChanges();
 
             noiseMapDimensions = new Vector2(300, 300);
@@ -63,17 +65,19 @@ namespace Infinite_World
 
             Debug.WriteLine(tiles.Count);
 
-            heatMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 5.0f);
+            heatMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 15.0f);
 
             base.Initialize();
 
             tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue, deepWaterTile));
             tiles.Add(new Tile(new Vector2(0.35f, 0.55f), Color.CornflowerBlue, shallowWaterTile));
-            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), Color.Beige, grassTile));
+            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), Color.Beige, sandTile));
             tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green, grassTile));
-            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black, grassTile));
+            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black, mountainTile));
 
-            tileMap = Map.GenerateTileMap(heatMap, tiles, _graphics.GraphicsDevice, _spriteBatch);
+            features.Add(new Feature(new Vector2(0.65f, 0.9f), Color.Brown, trees));
+
+            tileMap = Map.GenerateTileMap(heatMap, tiles, features, _graphics.GraphicsDevice, _spriteBatch);
             map = Map.GenerateColourMap(heatMap, tiles, GraphicsDevice);
 
         }
@@ -83,11 +87,14 @@ namespace Infinite_World
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             grass = Content.Load<Texture2D>("Grass");
-            grassTile = Content.Load<Texture2D>(@"Tiles\GrassTile");
-            shallowWaterTile = Content.Load<Texture2D>(@"Tiles\ShallowWaterTile");
-            deepWaterTile = Content.Load<Texture2D>(@"Tiles\DeepWaterTile");
+            grassTile = Content.Load<Texture2D>(@"Tiles\GrassTile2");
+            shallowWaterTile = Content.Load<Texture2D>(@"Tiles\ShallowWaterTile2");
+            deepWaterTile = Content.Load<Texture2D>(@"Tiles\DeepWaterTile2");
+            sandTile = Content.Load<Texture2D>(@"Tiles\SandTile1");
+            mountainTile = Content.Load<Texture2D>(@"Tiles\MountainTile1");
 
-
+            trees.Add(Content.Load<Texture2D>(@"Features\Tree1"));
+            trees.Add(Content.Load<Texture2D>(@"Features\Tree2"));
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
 

@@ -46,11 +46,12 @@ namespace Infinite_World
             return texture;
         }
 
-        public static RenderTarget2D GenerateTileMap(float[,] noiseMap, List<Tile> tiles, GraphicsDevice graphics, SpriteBatch spriteBatch)
+        public static RenderTarget2D GenerateTileMap(float[,] noiseMap, List<Tile> tiles, List<Feature> features, GraphicsDevice graphics, SpriteBatch spriteBatch)
         {
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
             int tileLength = tiles[0].Length;
+            int[,] rectGrid = Jitter.JitterGrid(noiseMap);
 
             RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * tileLength, height * tileLength);
             Vector2 tilePosition = new Vector2(0, 0);
@@ -72,6 +73,14 @@ namespace Infinite_World
                             tile.Draw(spriteBatch, tilePosition);
                         }
                     }
+                    foreach(Feature feature in features)
+                    {
+                        if (rectGrid[x + (int)noiseValue, y] == 0 && feature.SatisfyCondition(noiseValue))
+                        {
+                            feature.Draw(spriteBatch, tilePosition);
+                        }
+                    }
+
                     tilePosition.X = (x) * 8;
                 }
                 tilePosition.Y = y * 8;
