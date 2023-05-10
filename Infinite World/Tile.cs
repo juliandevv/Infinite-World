@@ -11,16 +11,23 @@ namespace Infinite_World
 {
     internal class Tile
     {
+        public enum Biomes
+        {
+            Desert,
+            Grassland
+        }
+
         private Vector2 _conditions;
         private Color _colour;
         private Texture2D _texture;
+        private Biomes _biome;
 
-
-        public Tile(Vector2 conditions, Color colour, Texture2D texture)
+        public Tile(Vector2 conditions, Color colour, Texture2D texture, Biomes biome)
         {
             _conditions = conditions;
             _colour = colour;
             _texture = texture;
+            _biome = biome;
         }
 
         public bool SatisfyCondition(float noiseValue)
@@ -42,6 +49,8 @@ namespace Infinite_World
         }
       
         public Color Colour { get { return _colour; } } 
+
+        public Biomes Biome { get { return _biome; } }
 
         public int Length { get { return _texture.Width; } }
     }
