@@ -17,6 +17,8 @@ namespace Infinite_World
         RenderTarget2D tileMap;
         Texture2D grassTile, shallowWaterTile, deepWaterTile, sandTile, mountainTile;
         List<Texture2D> trees = new List<Texture2D>();
+        //List<Texture2D> desertTiles = new List<Texture2D>();
+        List<Texture2D> grasslandTiles = new List<Texture2D>();
 
         // MAP
         Vector2 mapDimensions;
@@ -26,6 +28,7 @@ namespace Infinite_World
         float[,] heatMap;
         List<Tile> tiles = new List<Tile>();
         List<Feature> features = new List<Feature>();
+        List<Biome> biomes = new List<Biome>();
 
         // INPUT
         KeyboardState keyboardState;
@@ -67,6 +70,9 @@ namespace Infinite_World
 
             heatMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 15.0f);
 
+            biomes.Add(new Desert(new List<float>() { 0.5f, 0.4f, 0.3f }, new List<float>() { 0.7f, 0.4f, 0.3f }));
+            biomes.Add(new Grassland(new List<float>() { 0.0f, 0.4f, 0.3f }, new List<float>() { 0.5f, 0.4f, 0.3f }));
+
             base.Initialize();
 
             tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue, deepWaterTile));
@@ -75,9 +81,15 @@ namespace Infinite_World
             tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green, grassTile));
             tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black, mountainTile));
 
+            foreach(Biome biome in biomes)
+            {
+                biome.Load(Content);
+            }
+
             features.Add(new Feature(new Vector2(0.65f, 0.9f), Color.Brown, trees));
 
-            tileMap = Map.GenerateTileMap(heatMap, tiles, features, _graphics.GraphicsDevice, _spriteBatch);
+
+            tileMap = Map.GenerateTileMap(heatMap, tiles, features, _graphics.GraphicsDevice, _spriteBatch, biomes);
             map = Map.GenerateColourMap(heatMap, tiles, GraphicsDevice);
 
         }
@@ -90,7 +102,7 @@ namespace Infinite_World
             grassTile = Content.Load<Texture2D>(@"Tiles\GrassTile2");
             shallowWaterTile = Content.Load<Texture2D>(@"Tiles\ShallowWaterTile2");
             deepWaterTile = Content.Load<Texture2D>(@"Tiles\DeepWaterTile2");
-            sandTile = Content.Load<Texture2D>(@"Tiles\SandTile1");
+            //sandTile = Content.Load<Texture2D>(@"Tiles\SandTile1");
             mountainTile = Content.Load<Texture2D>(@"Tiles\MountainTile1");
 
             trees.Add(Content.Load<Texture2D>(@"Features\Tree1"));

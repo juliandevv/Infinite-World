@@ -46,13 +46,14 @@ namespace Infinite_World
             return texture;
         }
 
-        public static RenderTarget2D GenerateTileMap(float[,] noiseMap, List<Tile> tiles, List<Feature> features, GraphicsDevice graphics, SpriteBatch spriteBatch)
+        public static RenderTarget2D GenerateTileMap(float[,] noiseMap, List<Tile> tiles, List<Feature> features, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
             int tileLength = tiles[0].Length;
             int[,] rectGrid = Jitter.JitterGrid(noiseMap);
 
+            Texture2D drawTile;
             RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * tileLength, height * tileLength);
             Vector2 tilePosition = new Vector2(0, 0);
 
@@ -66,20 +67,23 @@ namespace Infinite_World
                 {
                     float noiseValue = noiseMap[x, y];
 
-                    foreach (Tile tile in tiles)
-                    {
-                        if (tile.SatisfyCondition(noiseValue))
-                        {
-                            tile.Draw(spriteBatch, tilePosition);
-                        }
-                    }
-                    foreach(Feature feature in features)
-                    {
-                        if (rectGrid[x + (int)noiseValue, y] == 0 && feature.SatisfyCondition(noiseValue))
-                        {
-                            feature.Draw(spriteBatch, tilePosition);
-                        }
-                    }
+                    drawTile = GetBiome(biomes, noiseValue).GetTile();
+                    spriteBatch.Draw(drawTile, tilePosition, Color.White);
+
+                    //foreach (Tile tile in tiles)
+                    //{
+                    //    if (tile.SatisfyCondition(noiseValue))
+                    //    {
+                    //        tile.Draw(spriteBatch, tilePosition);
+                    //    }
+                    //}
+                    //foreach(Feature feature in features)
+                    //{
+                    //    if (rectGrid[x + (int)noiseValue, y] == 0 && feature.SatisfyCondition(noiseValue))
+                    //    {
+                    //        feature.Draw(spriteBatch, tilePosition);
+                    //    }
+                    //}
 
                     tilePosition.X = (x) * 8;
                 }
@@ -89,6 +93,18 @@ namespace Infinite_World
             graphics.SetRenderTarget(null);
 
             return renderTarget;
+        }
+
+        public static Biome GetBiome(List<Biome> biomes, float noiseValue)
+        {
+            foreach(Biome biome in biomes)
+            {
+                if (biome.SatisfyCondition(noiseValue))
+                {
+                    return biome;
+                }
+            }
+            return biomes[0];
         }
     }
 }

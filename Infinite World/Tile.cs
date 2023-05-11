@@ -22,12 +22,12 @@ namespace Infinite_World
         private Texture2D _texture;
         private Biomes _biome;
 
-        public Tile(Vector2 conditions, Color colour, Texture2D texture, Biomes biome)
+        public Tile(Vector2 conditions, Color colour, Texture2D texture)
         {
             _conditions = conditions;
             _colour = colour;
             _texture = texture;
-            _biome = biome;
+            //_biome = biome;
         }
 
         public bool SatisfyCondition(float noiseValue)
@@ -50,7 +50,7 @@ namespace Infinite_World
       
         public Color Colour { get { return _colour; } } 
 
-        public Biomes Biome { get { return _biome; } }
+        public Texture2D Texture { get { return _texture; } }
 
         public int Length { get { return _texture.Width; } }
     }
