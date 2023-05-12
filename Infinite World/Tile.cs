@@ -11,21 +11,14 @@ namespace Infinite_World
 {
     internal class Tile
     {
-        public enum Biomes
-        {
-            Desert,
-            Grassland
-        }
 
         private Vector2 _conditions;
         private Color _colour;
         private Texture2D _texture;
-        private Biomes _biome;
 
-        public Tile(Vector2 conditions, Color colour, Texture2D texture)
+        public Tile(Vector2 conditions, Texture2D texture)
         {
             _conditions = conditions;
-            _colour = colour;
             _texture = texture;
             //_biome = biome;
         }
@@ -48,7 +41,7 @@ namespace Infinite_World
             spriteBatch.Draw(_texture, position, Color.White);
         }
       
-        public Color Colour { get { return _colour; } } 
+        //public Color Colour { get { return _colour; } } 
 
         public Texture2D Texture { get { return _texture; } }
 

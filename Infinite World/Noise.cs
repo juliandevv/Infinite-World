@@ -60,5 +60,21 @@ namespace Infinite_World
 
             return noiseMap;
         }
+
+        public static float[,] Amplify(float[,] noiseMap)
+        {
+            int width = noiseMap.GetLength(0);
+            int height = noiseMap.GetLength(1);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    noiseMap[x, y] = noiseMap[x, y] * Math.Abs(y - height);
+                }
+            }
+
+            return Normalize(noiseMap);
+        }
     }
 }

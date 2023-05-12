@@ -35,7 +35,7 @@ namespace Infinite_World
                             //Debug.WriteLine(true);
                             //Debug.WriteLine(tile.Colour);
                             //tile.Raw.CopyTo(colours, (y * width +x) * 64);
-                            colours[y * width + x] = tile.Colour;
+                            //colours[y * width + x] = tile.Colour;
                         }
                         
                     }
@@ -46,28 +46,31 @@ namespace Infinite_World
             return texture;
         }
 
-        public static RenderTarget2D GenerateTileMap(float[,] noiseMap, List<Tile> tiles, List<Feature> features, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
+        public static RenderTarget2D GenerateTileMap(float[,] heightMap, float[,] heatMap, float[,] moistureMap, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
-            int width = noiseMap.GetLength(0);
-            int height = noiseMap.GetLength(1);
-            int tileLength = tiles[0].Length;
-            int[,] rectGrid = Jitter.JitterGrid(noiseMap);
+            int width = heightMap.GetLength(0);
+            int height = heightMap.GetLength(1);
+            //int tileLength = tiles[0].Length;
+            int[,] rectGrid = Jitter.JitterGrid(heightMap);
 
             Texture2D drawTile;
-            RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * tileLength, height * tileLength);
+            RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * 8, height * 8);
             Vector2 tilePosition = new Vector2(0, 0);
+            Vector3 values = new Vector3(0, 0, 0);
 
             graphics.SetRenderTarget(renderTarget);
             graphics.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            for (int y = 0; y < width; y++)
+            for (int x = 0; x < width; x++)
             {
-                for (int x = 0; x < height; x++)
+                for (int y = 0; y < height; y++)
                 {
-                    float noiseValue = noiseMap[x, y];
+                    values.X = heightMap[x, y];
+                    values.Y = heatMap[x, y];
+                    values.Z = moistureMap[x, y];
 
-                    drawTile = GetBiome(biomes, noiseValue).GetTile();
+                    drawTile = GetBiome(biomes, values).GetTile(values);
                     spriteBatch.Draw(drawTile, tilePosition, Color.White);
 
                     //foreach (Tile tile in tiles)
@@ -85,9 +88,9 @@ namespace Infinite_World
                     //    }
                     //}
 
-                    tilePosition.X = (x) * 8;
+                    tilePosition.Y = (y * 8);
                 }
-                tilePosition.Y = y * 8;
+                tilePosition.X = (x * 8);
             }
             spriteBatch.End();
             graphics.SetRenderTarget(null);
@@ -95,15 +98,19 @@ namespace Infinite_World
             return renderTarget;
         }
 
-        public static Biome GetBiome(List<Biome> biomes, float noiseValue)
+        public static Biome GetBiome(List<Biome> biomes, Vector3 values)
         {
+            List<Biome> matches = new List<Biome>();
+
             foreach(Biome biome in biomes)
             {
-                if (biome.SatisfyCondition(noiseValue))
+                if (values.X > biome.MinValues.X && values.Y > biome.MinValues.Y && values.Z > biome.MinValues.Z)
                 {
                     return biome;
                 }
             }
+
+
             return biomes[0];
         }
     }

@@ -25,7 +25,7 @@ namespace Infinite_World
         Vector2 noiseMapDimensions;
         Vector2 offsets;
         float zoom;
-        float[,] heatMap;
+        float[,] heightMap, heatMap, moistureMap;
         List<Tile> tiles = new List<Tile>();
         List<Feature> features = new List<Feature>();
         List<Biome> biomes = new List<Biome>();
@@ -60,6 +60,7 @@ namespace Infinite_World
             _graphics.ApplyChanges();
 
             noiseMapDimensions = new Vector2(300, 300);
+            Plot plt = new Plot(300, 300);
             mapDimensions = noiseMapDimensions * 8;
             offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
             scrollValue = 120;
@@ -68,18 +69,24 @@ namespace Infinite_World
 
             Debug.WriteLine(tiles.Count);
 
-            heatMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 15.0f);
+            heightMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 15.0f);
+            heatMap = Noise.GenerateNoiseMap(171726, noiseMapDimensions, 15.0f);
+            heatMap = Noise.Amplify(heatMap);
+            moistureMap = Noise.GenerateNoiseMap(556473, noiseMapDimensions, 15.0f);
+            plt.AddHeatmap(FloatToDouble(heatMap));
+            plt.SaveFig("heatmap.png");
 
-            biomes.Add(new Desert(new List<float>() { 0.5f, 0.4f, 0.3f }, new List<float>() { 0.7f, 0.4f, 0.3f }));
-            biomes.Add(new Grassland(new List<float>() { 0.0f, 0.4f, 0.3f }, new List<float>() { 0.5f, 0.4f, 0.3f }));
+            biomes.Add(new Desert(new Vector3(0.5f, 0.8f, 0.0f), new List<float>() { 0.7f, 1.5f, 0.3f }));
+            biomes.Add(new Grassland(new Vector3(0.5f, 0.4f, 0.3f), new List<float>() { 1.5f, 0.4f, 0.3f }));
+            biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f), new List<float>() { 0.5f, 0.4f, 0.3f }));
 
             base.Initialize();
 
-            tiles.Add(new Tile(new Vector2(0.0f, 0.35f), Color.Blue, deepWaterTile));
-            tiles.Add(new Tile(new Vector2(0.35f, 0.55f), Color.CornflowerBlue, shallowWaterTile));
-            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), Color.Beige, sandTile));
-            tiles.Add(new Tile(new Vector2(0.65f, 0.9f), Color.Green, grassTile));
-            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), Color.Black, mountainTile));
+            tiles.Add(new Tile(new Vector2(0.0f, 0.35f), deepWaterTile));
+            tiles.Add(new Tile(new Vector2(0.35f, 0.55f), shallowWaterTile));
+            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), sandTile));
+            tiles.Add(new Tile(new Vector2(0.65f, 0.9f), grassTile));
+            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), mountainTile));
 
             foreach(Biome biome in biomes)
             {
@@ -89,8 +96,8 @@ namespace Infinite_World
             features.Add(new Feature(new Vector2(0.65f, 0.9f), Color.Brown, trees));
 
 
-            tileMap = Map.GenerateTileMap(heatMap, tiles, features, _graphics.GraphicsDevice, _spriteBatch, biomes);
-            map = Map.GenerateColourMap(heatMap, tiles, GraphicsDevice);
+            tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
+            //map = Map.GenerateColourMap(heightMap, tiles, GraphicsDevice);
 
         }
 
@@ -185,7 +192,7 @@ namespace Infinite_World
             _spriteBatch.Begin();
 
             _spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
-            _spriteBatch.Draw(map, new Vector2(800, 0), Color.White);
+            //_spriteBatch.Draw(map, new Vector2(800, 0), Color.White);
 
 
             _spriteBatch.End();
@@ -193,6 +200,18 @@ namespace Infinite_World
             base.Draw(gameTime);
         }
 
-        
+        public double[,] FloatToDouble(float[,] floatArray)
+        {
+            double[,] doubleArray = new double[300, 300];
+
+            for (int i = 0; i < floatArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < floatArray.GetLength(1); j++)
+                {
+                    doubleArray[i, j] = floatArray[i, j];
+                }
+            }
+            return doubleArray;
+        }
     }
 }
