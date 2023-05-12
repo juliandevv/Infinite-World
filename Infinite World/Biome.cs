@@ -27,6 +27,8 @@ namespace Infinite_World
             get;
         }
 
+        public abstract float GetMatchValue(Vector3 values);
+
         public abstract void Load(ContentManager content);
 
         public abstract Texture2D GetTile(Vector3 values);
@@ -65,6 +67,12 @@ namespace Infinite_World
         //    }
         //    return false;
         //}
+
+        public override float GetMatchValue(Vector3 values)
+        {
+            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            return matchValue;
+        }
 
         public override Texture2D GetTile(Vector3 values)
         {
@@ -113,6 +121,12 @@ namespace Infinite_World
         //    return false;
         //}
 
+        public override float GetMatchValue(Vector3 values)
+        {
+            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            return matchValue;
+        }
+
         public override Texture2D GetTile(Vector3 values)
         {
             foreach (Tile tile in _tiles)
@@ -159,6 +173,12 @@ namespace Infinite_World
         //    }
         //    return false;
         //}
+
+        public override float GetMatchValue(Vector3 values)
+        {
+            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            return matchValue;
+        }
 
         public override Texture2D GetTile(Vector3 values)
         {

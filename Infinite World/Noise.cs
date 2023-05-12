@@ -45,12 +45,12 @@ namespace Infinite_World
             int height = noiseMap.GetLength(1);
 
             float max = noiseMap.Cast<float>().Max();
-            //Debug.WriteLine(max);
+            Debug.WriteLine(max);
             float min = noiseMap.Cast<float>().Min();
-            //Debug.WriteLine(min);
+            Debug.WriteLine(min);
             float range = max - min;
 
-            for(int x = 0; x < width; x++)
+            for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
@@ -66,14 +66,18 @@ namespace Infinite_World
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
 
+            float scaleFactor;
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseMap[x, y] = noiseMap[x, y] * Math.Abs(y - height);
+                    scaleFactor = Math.Abs(y - (height / 2f)) * (-1f) + (height / 2f);
+                    //Debug.WriteLine(scaleFactor);
+                    noiseMap[x, y] = noiseMap[x, y] * scaleFactor;
                 }
             }
-
+            
             return Normalize(noiseMap);
         }
     }

@@ -101,17 +101,29 @@ namespace Infinite_World
         public static Biome GetBiome(List<Biome> biomes, Vector3 values)
         {
             List<Biome> matches = new List<Biome>();
+            Biome returnBiome = biomes[1];
+            float matchValue = returnBiome.GetMatchValue(values);
 
-            foreach(Biome biome in biomes)
+            foreach (Biome biome in biomes)
             {
                 if (values.X > biome.MinValues.X && values.Y > biome.MinValues.Y && values.Z > biome.MinValues.Z)
                 {
-                    return biome;
+                    matches.Add(biome);
                 }
             }
 
+            foreach (Biome biome in biomes)
+            {
+                //Debug.WriteLine();
+                if(biome.GetMatchValue(values) < matchValue)
+                {
+                    //Debug.WriteLine(matchValue);
+                    returnBiome = biome;
+                    matchValue = biome.GetMatchValue(values);
+                }
+            }
 
-            return biomes[0];
+            return returnBiome;
         }
     }
 }

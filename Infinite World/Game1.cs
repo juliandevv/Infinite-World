@@ -59,7 +59,7 @@ namespace Infinite_World
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.ApplyChanges();
 
-            noiseMapDimensions = new Vector2(300, 300);
+            noiseMapDimensions = new Vector2(600, 600);
             Plot plt = new Plot(300, 300);
             mapDimensions = noiseMapDimensions * 8;
             offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
@@ -70,14 +70,20 @@ namespace Infinite_World
             Debug.WriteLine(tiles.Count);
 
             heightMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 15.0f);
-            heatMap = Noise.GenerateNoiseMap(171726, noiseMapDimensions, 15.0f);
+            heatMap = Noise.GenerateNoiseMap(17626, noiseMapDimensions, 15.0f);
             heatMap = Noise.Amplify(heatMap);
             moistureMap = Noise.GenerateNoiseMap(556473, noiseMapDimensions, 15.0f);
             plt.AddHeatmap(FloatToDouble(heatMap));
+            //plt.AddHeatmap(FloatToDouble(moistureMap));
             plt.SaveFig("heatmap.png");
 
-            biomes.Add(new Desert(new Vector3(0.5f, 0.8f, 0.0f), new List<float>() { 0.7f, 1.5f, 0.3f }));
-            biomes.Add(new Grassland(new Vector3(0.5f, 0.4f, 0.3f), new List<float>() { 1.5f, 0.4f, 0.3f }));
+            //foreach (float value in heatMap)
+            //{
+            //    Debug.WriteLine(value);
+            //}
+
+            biomes.Add(new Desert(new Vector3(0.4f, 0.8f, 0.1f), new List<float>() { 0.7f, 1.5f, 0.3f }));
+            biomes.Add(new Grassland(new Vector3(0.4f, 0.4f, 0.3f), new List<float>() { 1.5f, 0.4f, 0.3f }));
             biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f), new List<float>() { 0.5f, 0.4f, 0.3f }));
 
             base.Initialize();
