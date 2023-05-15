@@ -68,9 +68,9 @@ namespace Infinite_World
 
             float scaleFactor;
 
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < width; y++)
             {
-                for (int y = 0; y < height; y++)
+                for (int x = 0; x < height; x++)
                 {
                     scaleFactor = Math.Abs(y - (height / 2f)) * (-1f) + (height / 2f);
                     //Debug.WriteLine(scaleFactor);

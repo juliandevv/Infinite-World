@@ -59,8 +59,11 @@ namespace Infinite_World
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.ApplyChanges();
 
-            noiseMapDimensions = new Vector2(600, 600);
-            Plot plt = new Plot(300, 300);
+            noiseMapDimensions = new Vector2(300, 300);
+            Plot heightPlot = new Plot(300, 300);
+            Plot heatPlot = new Plot(300, 300);
+            Plot moisturePlot = new Plot(300, 300);
+
             mapDimensions = noiseMapDimensions * 8;
             offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
             scrollValue = 120;
@@ -69,21 +72,25 @@ namespace Infinite_World
 
             Debug.WriteLine(tiles.Count);
 
-            heightMap = Noise.GenerateNoiseMap(11311, noiseMapDimensions, 15.0f);
+            heightMap = Noise.GenerateNoiseMap(11411, noiseMapDimensions, 15.0f);
             heatMap = Noise.GenerateNoiseMap(17626, noiseMapDimensions, 15.0f);
             heatMap = Noise.Amplify(heatMap);
             moistureMap = Noise.GenerateNoiseMap(556473, noiseMapDimensions, 15.0f);
-            plt.AddHeatmap(FloatToDouble(heatMap));
-            //plt.AddHeatmap(FloatToDouble(moistureMap));
-            plt.SaveFig("heatmap.png");
+
+            heightPlot.AddHeatmap(FloatToDouble(heightMap));
+            heightPlot.SaveFig("heightMap.png");
+            heatPlot.AddHeatmap(FloatToDouble(heatMap));
+            heatPlot.SaveFig("heatmap.png");
+            moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
+            moisturePlot.SaveFig("moistureMap.png");
 
             //foreach (float value in heatMap)
             //{
             //    Debug.WriteLine(value);
             //}
 
-            biomes.Add(new Desert(new Vector3(0.4f, 0.8f, 0.1f), new List<float>() { 0.7f, 1.5f, 0.3f }));
-            biomes.Add(new Grassland(new Vector3(0.4f, 0.4f, 0.3f), new List<float>() { 1.5f, 0.4f, 0.3f }));
+            biomes.Add(new Desert(new Vector3(0.3f, 0.6f, 0.0f), new List<float>() { 0.7f, 1.5f, 0.3f }));
+            biomes.Add(new Grassland(new Vector3(0.3f, 0.3f, 0.5f), new List<float>() { 1.5f, 0.4f, 0.3f }));
             biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f), new List<float>() { 0.5f, 0.4f, 0.3f }));
 
             base.Initialize();
@@ -208,7 +215,10 @@ namespace Infinite_World
 
         public double[,] FloatToDouble(float[,] floatArray)
         {
-            double[,] doubleArray = new double[300, 300];
+            int width = floatArray.GetLength(0);
+            int height = floatArray.GetLength(1);
+
+            double[,] doubleArray = new double[width, height];
 
             for (int i = 0; i < floatArray.GetLength(0); i++)
             {

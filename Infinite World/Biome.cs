@@ -50,10 +50,10 @@ namespace Infinite_World
         public override void Load(ContentManager content)
         {
             _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.35f, 0.55f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            _tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            _tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            _tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
+            _tiles.Add(new Tile(new Vector2(0.35f, 1.55f), content.Load<Texture2D>(@"Tiles\SandTile1")));
+            //_tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\SandTile1")));
+            //_tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\SandTile1")));
+            //_tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
             //_tiles.Add(content.Load<Texture2D>(@"Tiles\ShallowWaterTile2"));
         }
 
@@ -156,10 +156,10 @@ namespace Infinite_World
         public override void Load(ContentManager content)
         {
             _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.35f, 0.55f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
+            _tiles.Add(new Tile(new Vector2(0.35f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+            //_tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+            //_tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+            //_tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
             //_tiles.Add(content.Load<Texture2D>(@"Tiles\ShallowWaterTile2"));
         }
 
