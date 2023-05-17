@@ -72,10 +72,10 @@ namespace Infinite_World
 
             Debug.WriteLine(tiles.Count);
 
-            heightMap = Noise.GenerateNoiseMap(11411, noiseMapDimensions, 15.0f);
-            heatMap = Noise.GenerateNoiseMap(17626, noiseMapDimensions, 15.0f);
+            heightMap = Noise.GenerateNoiseMap(generator.Next(0, 10000), noiseMapDimensions, 5.0f);
+            heatMap = Noise.GenerateNoiseMap(generator.Next(0, 10000), noiseMapDimensions, 5.0f);
             heatMap = Noise.Amplify(heatMap);
-            moistureMap = Noise.GenerateNoiseMap(556473, noiseMapDimensions, 15.0f);
+            moistureMap = Noise.GenerateNoiseMap(generator.Next(0, 10000), noiseMapDimensions, 5.0f);
 
             heightPlot.AddHeatmap(FloatToDouble(heightMap));
             heightPlot.SaveFig("heightMap.png");

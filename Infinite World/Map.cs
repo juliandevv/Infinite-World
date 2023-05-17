@@ -53,8 +53,8 @@ namespace Infinite_World
             //int tileLength = tiles[0].Length;
             int[,] rectGrid = Jitter.JitterGrid(heightMap);
 
-            Texture2D drawTile;
-            RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * 8, height * 8);
+            Tile drawTile;
+            RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * 16, height * 16);
             Vector2 tilePosition = new Vector2(0, 0);
             Vector3 values = new Vector3(0, 0, 0);
 
@@ -71,26 +71,12 @@ namespace Infinite_World
                     values.Z = moistureMap[x, y];
 
                     drawTile = GetBiome(biomes, values).GetTile(values);
-                    spriteBatch.Draw(drawTile, tilePosition, Color.White);
+                    drawTile.Draw(spriteBatch, tilePosition);
+                    //spriteBatch.Draw(drawTile, tilePosition, Color.White);
 
-                    //foreach (Tile tile in tiles)
-                    //{
-                    //    if (tile.SatisfyCondition(noiseValue))
-                    //    {
-                    //        tile.Draw(spriteBatch, tilePosition);
-                    //    }
-                    //}
-                    //foreach(Feature feature in features)
-                    //{
-                    //    if (rectGrid[x + (int)noiseValue, y] == 0 && feature.SatisfyCondition(noiseValue))
-                    //    {
-                    //        feature.Draw(spriteBatch, tilePosition);
-                    //    }
-                    //}
-
-                    tilePosition.Y = (y * 8);
+                    tilePosition.Y = (y * 16);
                 }
-                tilePosition.X = (x * 8);
+                tilePosition.X = (x * 16);
             }
             spriteBatch.End();
             graphics.SetRenderTarget(null);
@@ -113,22 +99,16 @@ namespace Infinite_World
                 {
                     matches.Add(biome);
                 }
-
-                //if (values.X >= 0.0f && values.Y >= 0.0f && values.Z >= 0.0f)
-                //{
-                //    matches.Add(biome);
-                //}
             }
-            //Debug.WriteLine(matches.Count);
 
-            foreach (Biome biome in matches)
+            foreach (Biome match in matches)
             {
                 //Debug.WriteLine();
-                if(biome.GetMatchValue(values) < matchValue)
+                if(match.GetMatchValue(values) < matchValue)
                 {
                     //Debug.WriteLine("Biome Match");
-                    returnBiome = biome;
-                    matchValue = biome.GetMatchValue(values);
+                    returnBiome = match;
+                    matchValue = match.GetMatchValue(values);
                     //Debug.WriteLine(matchValue);
                 }
             }

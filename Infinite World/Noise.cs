@@ -19,6 +19,7 @@ namespace Infinite_World
             noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
             //dont change these look good
+            noise.SetSeed(seed);
             noise.SetFrequency(0.05f);
             noise.SetFractalOctaves(4);
             noise.SetFractalLacunarity(2f);

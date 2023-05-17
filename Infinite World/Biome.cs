@@ -31,7 +31,7 @@ namespace Infinite_World
 
         public abstract void Load(ContentManager content);
 
-        public abstract Texture2D GetTile(Vector3 values);
+        public abstract Tile GetTile(Vector3 values);
     }
 
     class Desert : Biome
@@ -74,16 +74,16 @@ namespace Infinite_World
             return matchValue;
         }
 
-        public override Texture2D GetTile(Vector3 values)
+        public override Tile GetTile(Vector3 values)
         {
             foreach (Tile tile in _tiles)
             {
                 if (tile.SatisfyCondition(values.X))
                 {
-                    return tile.Texture;
+                    return tile;
                 }
             }
-            return _tiles[_generator.Next(0, _tiles.Count)].Texture;
+            return _tiles[_generator.Next(0, _tiles.Count)];
         }
     }
 
@@ -103,8 +103,8 @@ namespace Infinite_World
         public override void Load(ContentManager content)
         {
             _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.35f, 0.55f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
-            _tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
+            _tiles.Add(new Tile(new Vector2(0.35f, 0.45f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
+            _tiles.Add(new Tile(new Vector2(0.45f, 0.65f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
             _tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
             _tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\MountainTile1")));
             //_tiles.Add(content.Load<Texture2D>(@"Tiles\ShallowWaterTile2"));
@@ -127,16 +127,16 @@ namespace Infinite_World
             return matchValue;
         }
 
-        public override Texture2D GetTile(Vector3 values)
+        public override Tile GetTile(Vector3 values)
         {
             foreach (Tile tile in _tiles)
             {
                 if (tile.SatisfyCondition(values.X))
                 {
-                    return tile.Texture;
+                    return tile;
                 }
             }
-            return _tiles[_generator.Next(0, _tiles.Count)].Texture;
+            return _tiles[_generator.Next(0, _tiles.Count)];
         }
     }
 
@@ -155,8 +155,8 @@ namespace Infinite_World
 
         public override void Load(ContentManager content)
         {
-            _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.35f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+            _tiles.Add(new Tile(new Vector2(0.0f, 0.45f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
+            _tiles.Add(new Tile(new Vector2(0.45f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
             //_tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
             //_tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
             //_tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
@@ -180,16 +180,16 @@ namespace Infinite_World
             return matchValue;
         }
 
-        public override Texture2D GetTile(Vector3 values)
+        public override Tile GetTile(Vector3 values)
         {
             foreach (Tile tile in _tiles)
             {
                 if (tile.SatisfyCondition(values.X))
                 {
-                    return tile.Texture;
+                    return tile;
                 }
             }
-            return _tiles[_generator.Next(0, _tiles.Count)].Texture;
+            return _tiles[_generator.Next(0, _tiles.Count)];
         }
     }
 }
