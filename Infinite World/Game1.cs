@@ -40,16 +40,6 @@ namespace Infinite_World
         float elapsedTime;
         float speed;
         double acceleration;
-        Scrolling scrollingDirection = Scrolling.None;
-
-        public enum Scrolling
-        {
-            Left,
-            Right,
-            Up,
-            Down,
-            None
-        }
 
         // GRAPHICS
         RenderTarget2D renderTarget;
@@ -121,9 +111,6 @@ namespace Infinite_World
                 biome.Load(Content);
             }
 
-            features.Add(new Feature(new Vector2(0.65f, 0.9f), Color.Brown, trees));
-
-
             tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
             //map = Map.GenerateColourMap(heightMap, tiles, GraphicsDevice);
 
@@ -158,52 +145,32 @@ namespace Infinite_World
 
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                scrollingDirection = Scrolling.Left;
                 speed += 0.001f * elapsedTime;
                 offsets.X += speed * elapsedTime;
-                Debug.WriteLine("left key pressed");
-                Debug.WriteLine(keyPressTime);
 
                 //offsets.X += 5;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
-                scrollingDirection = Scrolling.Right;
-                keyPressTime = gameTime.ElapsedGameTime.TotalSeconds;
+                speed += 0.001f * elapsedTime;
+                offsets.X -= speed * elapsedTime;
                 //offsets.X -= 5; 
             }
             else if (keyboardState.IsKeyDown(Keys.Up))
             {
-                scrollingDirection = Scrolling.Up;
-                keyPressTime = gameTime.ElapsedGameTime.TotalSeconds;
+                speed += 0.001f * elapsedTime;
+                offsets.Y += speed * elapsedTime;
                 //offsets.Y += 5;
             }
             else if (keyboardState.IsKeyDown(Keys.Down))
             {
-                scrollingDirection = Scrolling.Down;
-                keyPressTime = gameTime.ElapsedGameTime.TotalSeconds;
+                speed += 0.001f * elapsedTime;
+                offsets.Y -= speed * elapsedTime;
                 //offsets.Y -= 5;
             }
             else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
             {
-                scrollingDirection = Scrolling.None;
-            }
-
-            //Debug.WriteLine("onegameloop");
-            switch (scrollingDirection)
-            {
-                case Scrolling.Left:
-                    Debug.WriteLine("scrolling Left");
-                    keyDownTime = gameTime.ElapsedGameTime.TotalSeconds - keyPressTime;
-                    Debug.WriteLine(keyDownTime);
-                    offsets.X += (int)(keyDownTime * 4 + (Math.Pow(keyDownTime, 2) * 2) / 2);
-                    break;
-                case Scrolling.Right:
-                    break;
-                case Scrolling.Up:
-                    break;
-                case Scrolling.Down:
-                    break;
+                speed = 0.1f;
             }
 
             lastKeyboardState = keyboardState;

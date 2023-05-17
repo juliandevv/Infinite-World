@@ -53,7 +53,9 @@ namespace Infinite_World
             //int tileLength = tiles[0].Length;
             int[,] rectGrid = Jitter.JitterGrid(heightMap);
 
-            Tile drawTile;
+            //Tile drawTile;
+            Feature feature;
+            Biome biome;
             RenderTarget2D renderTarget = new RenderTarget2D(graphics, width * 16, height * 16);
             Vector2 tilePosition = new Vector2(0, 0);
             Vector3 values = new Vector3(0, 0, 0);
@@ -70,9 +72,13 @@ namespace Infinite_World
                     values.Y = heatMap[x, y];
                     values.Z = moistureMap[x, y];
 
-                    drawTile = GetBiome(biomes, values).GetTile(values);
-                    drawTile.Draw(spriteBatch, tilePosition);
-                    //spriteBatch.Draw(drawTile, tilePosition, Color.White);
+                    biome = GetBiome(biomes, values);
+                    biome.GetTile(values).Draw(spriteBatch, tilePosition);
+                    feature = biome.GetFeature(values);
+                    if (feature != null)
+                    {
+                        feature.Draw(spriteBatch, tilePosition);
+                    }
 
                     tilePosition.Y = (y * 16);
                 }

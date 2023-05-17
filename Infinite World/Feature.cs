@@ -12,20 +12,22 @@ namespace Infinite_World
     {
         private Vector2 _conditions;
         private Color _colour;
-        private List<Texture2D> _textures;
+        private int _abundance;
+        private Texture2D _texture;
         private Random _generator;
 
-        public Feature(Vector2 conditions, Color colour, List<Texture2D> textures)
+        public Feature(Vector2 conditions, int abundance, Texture2D texture)
         {
             _conditions = conditions;
-            _colour = colour;
-            _textures = textures;
+            _abundance = abundance;
+            _texture = texture;
             _generator = new Random();
         }
+
         public bool SatisfyCondition(float noiseValue)
         {
             //Debug.WriteLine(noiseValue);
-            if (noiseValue >= _conditions.X && noiseValue < _conditions.Y)
+            if (noiseValue >= _conditions.X && noiseValue < _conditions.Y && _generator.Next(0,(int)(10 / _abundance)) == 1)
             {
                 //Debug.WriteLine(true);
                 return true;
@@ -34,10 +36,10 @@ namespace Infinite_World
             //Debug.WriteLine(false);
             return false;
         }
+
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
-            Texture2D texture = _textures[_generator.Next(0, _textures.Count)];
-            spriteBatch.Draw(texture, position, Color.White);
+            spriteBatch.Draw(_texture, new Rectangle((int)position.X, (int)position.Y, 16, 16), new Rectangle((_generator.Next(0, 4) * 16), 0, 16, 16), Color.White);
         }
     }
 }

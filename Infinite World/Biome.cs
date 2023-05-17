@@ -20,8 +20,6 @@ namespace Infinite_World
             _generator = new Random();
         }
 
-        //public abstract float BiomeMatch(Vector3 values);
-
         public abstract Vector3 MinValues
         {
             get;
@@ -32,42 +30,29 @@ namespace Infinite_World
         public abstract void Load(ContentManager content);
 
         public abstract Tile GetTile(Vector3 values);
+
+        public abstract Feature GetFeature(Vector3 values);
     }
 
     class Desert : Biome
     {
         private List<Tile> _tiles = new List<Tile>();
+        private List<Feature> _features = new List<Feature>();
         private Vector3 _minValues = new Vector3();
-        private List<float> _maxValues = new List<float>();
 
         public Desert(Vector3 minValues, List<float> maxValues)
         {
-            //_tiles = tiles;
             _minValues = minValues;
-            _maxValues = maxValues;
         }
 
         public override void Load(ContentManager content)
         {
             _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
             _tiles.Add(new Tile(new Vector2(0.35f, 1.55f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            //_tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            //_tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            //_tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            //_tiles.Add(content.Load<Texture2D>(@"Tiles\ShallowWaterTile2"));
         }
 
         public override Vector3 MinValues{ get{ return _minValues; } }
-
-        //public override float BiomeMatch(Vector3 values)
-        //{
-        //    if (noiseValue > _minValues[0] && noiseValue < _maxValues[0])
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
+       
         public override float GetMatchValue(Vector3 values)
         {
             float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
@@ -84,6 +69,18 @@ namespace Infinite_World
                 }
             }
             return _tiles[_generator.Next(0, _tiles.Count)];
+        }
+
+        public override Feature GetFeature(Vector3 values)
+        {
+            foreach (Feature feature in _features)
+            {
+                if (feature.SatisfyCondition(values.X))
+                {
+                    return feature;
+                }
+            }
+            return null;
         }
     }
 
@@ -91,35 +88,25 @@ namespace Infinite_World
     {
         private List<Tile> _tiles = new List<Tile>();
         private Vector3 _minValues = new Vector3();
-        private List<float> _maxValues = new List<float>();
+        private List<Feature> _features = new List<Feature>();
 
         public Grassland(Vector3 minValues, List<float> maxValues)
         {
-            //_tiles = tiles;
             _minValues = minValues;
-            _maxValues = maxValues;
         }
 
         public override void Load(ContentManager content)
         {
-            _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+            _tiles.Add(new Tile(new Vector2(0.0f, 0.35f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
             _tiles.Add(new Tile(new Vector2(0.35f, 0.45f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
             _tiles.Add(new Tile(new Vector2(0.45f, 0.65f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
             _tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\GrassTile2")));
             _tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\MountainTile1")));
-            //_tiles.Add(content.Load<Texture2D>(@"Tiles\ShallowWaterTile2"));
+
+            _features.Add(new Feature(new Vector2(0.4f, 0.9f), 1, content.Load<Texture2D>(@"Features\Tree1")));
         }
 
         public override Vector3 MinValues { get { return _minValues; } }
-
-        //public override float BiomeMatch(Vector3 values)
-        //{
-        //    if (noiseValue > _minValues[0] && noiseValue < _maxValues[0])
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
 
         public override float GetMatchValue(Vector3 values)
         {
@@ -137,6 +124,18 @@ namespace Infinite_World
                 }
             }
             return _tiles[_generator.Next(0, _tiles.Count)];
+        }
+
+        public override Feature GetFeature(Vector3 values)
+        {
+            foreach (Feature feature in _features)
+            {
+                if (feature.SatisfyCondition(values.X))
+                {
+                    return feature;
+                }
+            }
+            return null;
         }
     }
 
@@ -144,35 +143,20 @@ namespace Infinite_World
     {
         private List<Tile> _tiles = new List<Tile>();
         private Vector3 _minValues = new Vector3();
-        private List<float> _maxValues = new List<float>();
+        private List<Feature> _features = new List<Feature>();
 
         public Ocean(Vector3 minValues, List<float> maxValues)
         {
-            //_tiles = tiles;
             _minValues = minValues;
-            _maxValues = maxValues;
         }
 
         public override void Load(ContentManager content)
         {
-            _tiles.Add(new Tile(new Vector2(0.0f, 0.55f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
-            _tiles.Add(new Tile(new Vector2(0.55f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            //_tiles.Add(new Tile(new Vector2(0.55f, 0.65f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            //_tiles.Add(new Tile(new Vector2(0.65f, 0.9f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
-            //_tiles.Add(new Tile(new Vector2(0.9f, 1.5f), content.Load<Texture2D>(@"Tiles\SandTile1")));
-            //_tiles.Add(content.Load<Texture2D>(@"Tiles\ShallowWaterTile2"));
+            _tiles.Add(new Tile(new Vector2(0.0f, 0.27f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
+            _tiles.Add(new Tile(new Vector2(0.27f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
         }
 
         public override Vector3 MinValues { get { return _minValues; } }
-
-        //public override float BiomeMatch(Vector3 values)
-        //{
-        //    if (noiseValue > _minValues[0] && noiseValue < _maxValues[0])
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
 
         public override float GetMatchValue(Vector3 values)
         {
@@ -190,6 +174,18 @@ namespace Infinite_World
                 }
             }
             return _tiles[_generator.Next(0, _tiles.Count)];
+        }
+
+        public override Feature GetFeature(Vector3 values)
+        {
+            foreach (Feature feature in _features)
+            {
+                if (feature.SatisfyCondition(values.X))
+                {
+                    return feature;
+                }
+            }
+            return null;
         }
     }
 }
