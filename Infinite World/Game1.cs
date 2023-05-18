@@ -19,6 +19,8 @@ namespace Infinite_World
         List<Texture2D> trees = new List<Texture2D>();
         //List<Texture2D> desertTiles = new List<Texture2D>();
         List<Texture2D> grasslandTiles = new List<Texture2D>();
+        Point windowSize;
+        Point windowOffset;
 
         // MAP
         Vector2 mapDimensions;
@@ -33,8 +35,8 @@ namespace Infinite_World
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
         MouseState mouseState;
-        int lastScrollValue;
-        int scrollValue;
+        float lastScrollValue;
+        float scrollValue;
         double keyDownTime;
         double keyPressTime;
         float elapsedTime;
@@ -62,6 +64,8 @@ namespace Infinite_World
         {
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.PreferredBackBufferWidth = 1280;
+            windowSize = new Point(1920, 1080);
+            windowOffset = new Point(0, 0);
             _graphics.ApplyChanges();
 
             noiseMapDimensions = new Vector2(300, 300);
@@ -130,7 +134,7 @@ namespace Infinite_World
             trees.Add(Content.Load<Texture2D>(@"Features\Tree1"));
             trees.Add(Content.Load<Texture2D>(@"Features\Tree2"));
 
-            renderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
 
         }
 
@@ -176,10 +180,10 @@ namespace Infinite_World
             lastKeyboardState = keyboardState;
             
             scrollValue = mouseState.ScrollWheelValue;
-            if (scrollValue < 0)
-            {
-                scrollValue *= -1;
-            }
+            //if (scrollValue < 0)
+            //{
+            //    scrollValue *= -1;
+            //}
 
             if (scrollValue != lastScrollValue)
             {
@@ -187,43 +191,32 @@ namespace Infinite_World
                 Debug.WriteLine(scrollValue);
 
                 zoom = 1 + (scrollValue/240);
-                mapDimensions = noiseMapDimensions * 8;
-                mapDimensions *= zoom;
                 lastScrollValue = scrollValue;
             }
 
-            
-           
+            windowSize = new Point((int)(zoom * 1920), (int)(zoom * 1080));
+            windowOffset = new Point(-(windowSize.X - 1920) / 2, -(windowSize.Y - 1080) / 2);
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            //renderScale = 1f / (720f / _graphics.GraphicsDevice.Viewport.Height);
-
-            //GraphicsDevice.SetRenderTarget(renderTarget);
-            //GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            //_spriteBatch.Begin();
-
-            //_spriteBatch.Draw(map, new Rectangle(offsets.ToPoint(), new Point(800, 800)), Color.White);
-            ////_spriteBatch.Draw(map, offsets, Color.White);
-            //for (int i = 0; i < tiles.Count; i++)
-            //{
-            //    tiles[i].Draw(_spriteBatch, new Vector2(i * 10, 50));
-            //}
-
-            //_spriteBatch.End();
-
-            //GraphicsDevice.SetRenderTarget(null);
-
+            GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
 
             _spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
-            //_spriteBatch.Draw(map, new Vector2(800, 0), Color.White);
 
+            _spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+            _spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
 
             _spriteBatch.End();
 
