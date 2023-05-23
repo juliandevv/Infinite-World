@@ -11,6 +11,7 @@ namespace Infinite_World
 {
     internal class Map
     {
+        private static List<TerrainChunk> visibleChunks = new List<TerrainChunk>();
 
         public static Texture2D GenerateColourMap(float[,] noiseMap, List<Tile> tiles, GraphicsDevice graphics)
         {
@@ -120,6 +121,25 @@ namespace Infinite_World
             }
 
             return returnBiome;
+        }
+
+        public static void Initialize()
+        {
+            visibleChunks.Add(new TerrainChunk(new Vector2(-1, 1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(0, 1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(1, 1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(-1, 0)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(0, 0)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(1, 0)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(-1, -1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(0, -1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(1, -1)));
+        }
+
+        public static void Update(Vector2 location)
+        {
+            Vector2 chunkAddress = location / 100;
+
         }
     }
 }

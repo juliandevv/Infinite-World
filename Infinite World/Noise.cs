@@ -11,9 +11,8 @@ namespace Infinite_World
 {
     internal class Noise
     {
-        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, float scale, float frequency, int octaves)
+        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, float scale, float frequency, int octaves)
         {
-            Vector2 offsets = new Vector2(0, 0);
             float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);

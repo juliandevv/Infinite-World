@@ -26,6 +26,7 @@ namespace Infinite_World
         Vector2 mapDimensions;
         Vector2 noiseMapDimensions;
         Vector2 offsets;
+        int mapSeed;
         float zoom;
         float[,] heightMap, heatMap, moistureMap;
         List<Tile> tiles = new List<Tile>();
@@ -81,10 +82,12 @@ namespace Infinite_World
 
             Debug.WriteLine(tiles.Count);
 
-            heightMap = Noise.GenerateNoiseMap(generator.Next(0, 10000), noiseMapDimensions, 5.0f, 0.05f, 4);
-            heatMap = Noise.GenerateNoiseMap(generator.Next(0, 10000), noiseMapDimensions, 5.0f, 0.04f, 2);
+            mapSeed = generator.Next(0, 10000);
+
+            heightMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.06f, 4);
+            heatMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.04f, 2);
             //heatMap = Noise.Amplify(heatMap);
-            moistureMap = Noise.GenerateNoiseMap(generator.Next(0, 10000), noiseMapDimensions, 5.0f, 0.03f, 1);
+            moistureMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.03f, 1);
 
             heightPlot.AddHeatmap(FloatToDouble(heightMap));
             heightPlot.SaveFig("heightMap.png");
