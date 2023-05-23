@@ -12,6 +12,8 @@ namespace Infinite_World
     internal class Map
     {
         private static List<TerrainChunk> visibleChunks = new List<TerrainChunk>();
+        private static Vector2 currentChunkAddress;
+        private static RenderTarget2D mapTexture;
 
         public static Texture2D GenerateColourMap(float[,] noiseMap, List<Tile> tiles, GraphicsDevice graphics)
         {
@@ -136,10 +138,54 @@ namespace Infinite_World
             visibleChunks.Add(new TerrainChunk(new Vector2(1, -1)));
         }
 
-        public static void Update(Vector2 location)
+        public static void Update(Vector2 location, int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
-            Vector2 chunkAddress = location / 100;
+            Vector2 chunkAddress = new Vector2((float)Math.Floor(location.X / -800), (float)Math.Floor(location.Y / -800));
+            if (currentChunkAddress != chunkAddress)
+            {
+                Debug.WriteLine("Entered New Chunk");
+                Debug.WriteLine(chunkAddress);
+                currentChunkAddress = chunkAddress;
+                visibleChunks.Clear();
 
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y)));
+
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y - 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y - 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y - 1)));
+
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y + 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
+
+                foreach (TerrainChunk chunk in visibleChunks)
+                {
+                    chunk.LoadChunk(mapSeed, graphics, spriteBatch, biomes);
+                }
+                Debug.WriteLine("Chunks loaded");
+
+                UpdateTexture(spriteBatch, graphics);
+            }
         }
+
+        public static void UpdateTexture(SpriteBatch spritebatch, GraphicsDevice graphics)
+        {
+            RenderTarget2D renderTarget = new RenderTarget2D(graphics, 2400, 2400);
+
+            graphics.SetRenderTarget(renderTarget);
+            spritebatch.Begin();
+            foreach(TerrainChunk chunk in visibleChunks)
+            {
+                chunk.DrawChunk(spritebatch);
+            }
+            spritebatch.End();
+            graphics.SetRenderTarget(null);
+
+            mapTexture = renderTarget;
+        }
+
+        public static RenderTarget2D Texture { get { return mapTexture; } }
     }
 }

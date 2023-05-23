@@ -45,9 +45,9 @@ namespace Infinite_World
             int height = noiseMap.GetLength(1);
 
             float max = noiseMap.Cast<float>().Max();
-            Debug.WriteLine(max);
+            //Debug.WriteLine(max);
             float min = noiseMap.Cast<float>().Min();
-            Debug.WriteLine(min);
+            //Debug.WriteLine(min);
             float range = max - min;
 
             for (int x = 0; x < width; x++)

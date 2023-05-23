@@ -80,21 +80,20 @@ namespace Infinite_World
             lastScrollValue = 0;
             zoom = 1;
 
-            Debug.WriteLine(tiles.Count);
-
             mapSeed = generator.Next(0, 10000);
 
-            heightMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.06f, 4);
-            heatMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.04f, 2);
-            //heatMap = Noise.Amplify(heatMap);
-            moistureMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.03f, 1);
+            Map.Initialize();
 
-            heightPlot.AddHeatmap(FloatToDouble(heightMap));
-            heightPlot.SaveFig("heightMap.png");
-            heatPlot.AddHeatmap(FloatToDouble(heatMap));
-            heatPlot.SaveFig("heatmap.png");
-            moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
-            moisturePlot.SaveFig("moistureMap.png");
+            //heightMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.06f, 4);
+            //heatMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.04f, 2);
+            //moistureMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.03f, 1);
+
+            //heightPlot.AddHeatmap(FloatToDouble(heightMap));
+            //heightPlot.SaveFig("heightMap.png");
+            //heatPlot.AddHeatmap(FloatToDouble(heatMap));
+            //heatPlot.SaveFig("heatmap.png");
+            //moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
+            //moisturePlot.SaveFig("moistureMap.png");
 
             //foreach (float value in heatMap)
             //{
@@ -107,35 +106,17 @@ namespace Infinite_World
 
             base.Initialize();
 
-            tiles.Add(new Tile(new Vector2(0.0f, 0.35f), deepWaterTile));
-            tiles.Add(new Tile(new Vector2(0.35f, 0.55f), shallowWaterTile));
-            tiles.Add(new Tile(new Vector2(0.55f, 0.65f), sandTile));
-            tiles.Add(new Tile(new Vector2(0.65f, 0.9f), grassTile));
-            tiles.Add(new Tile(new Vector2(0.9f, 1.5f), mountainTile));
-
             foreach(Biome biome in biomes)
             {
                 biome.Load(Content);
             }
 
-            tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
-            //map = Map.GenerateColourMap(heightMap, tiles, GraphicsDevice);
-
+            //tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            grass = Content.Load<Texture2D>("Grass");
-            grassTile = Content.Load<Texture2D>(@"Tiles\GrassTile2");
-            shallowWaterTile = Content.Load<Texture2D>(@"Tiles\ShallowWaterTile2");
-            deepWaterTile = Content.Load<Texture2D>(@"Tiles\DeepWaterTile2");
-            //sandTile = Content.Load<Texture2D>(@"Tiles\SandTile1");
-            mountainTile = Content.Load<Texture2D>(@"Tiles\MountainTile1");
-
-            trees.Add(Content.Load<Texture2D>(@"Features\Tree1"));
-            trees.Add(Content.Load<Texture2D>(@"Features\Tree2"));
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
 
@@ -190,15 +171,18 @@ namespace Infinite_World
 
             if (scrollValue != lastScrollValue)
             {
-                Debug.WriteLine(lastScrollValue);
-                Debug.WriteLine(scrollValue);
+                //Debug.WriteLine(lastScrollValue);
+                //Debug.WriteLine(scrollValue);
 
                 zoom = 1 + (scrollValue/240);
                 lastScrollValue = scrollValue;
             }
 
+            Map.Update(offsets, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+
             windowSize = new Point((int)(zoom * 1920), (int)(zoom * 1080));
-            windowOffset = new Point(-(windowSize.X - 1920) / 2, -(windowSize.Y - 1080) / 2);
+            //windowOffset = new Point(-(windowSize.X - 1920) / 2, -(windowSize.Y - 1080) / 2);
+            windowOffset = offsets.ToPoint();
 
             base.Update(gameTime);
         }
@@ -210,7 +194,8 @@ namespace Infinite_World
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
+            //_spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
+            _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 2400, 2400), Color.White);
 
             _spriteBatch.End();
 

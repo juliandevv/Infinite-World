@@ -32,10 +32,11 @@ namespace Infinite_World
             _texture = Map.GenerateTileMap(heightMap, heatMap, moistureMap, graphics, spriteBatch, biomes);
         }
 
-        public void DrawChunk(SpriteBatch spriteBatch, Vector2 location)
+        public void DrawChunk(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, location, Color.White);
+            spriteBatch.Draw(_texture, _address * 800, Color.White);
         }
 
+        public Vector2 Address { get { return _address; } }
     }
 }
