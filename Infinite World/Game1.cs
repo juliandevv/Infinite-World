@@ -63,8 +63,8 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = 720;
-            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 800;
+            _graphics.PreferredBackBufferWidth = 800;
             windowSize = new Point(1920, 1080);
             windowOffset = new Point(0, 0);
             _graphics.ApplyChanges();
@@ -75,12 +75,13 @@ namespace Infinite_World
             Plot moisturePlot = new Plot(300, 300);
 
             mapDimensions = noiseMapDimensions * 8;
-            offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
+            //offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
+            offsets = new Vector2(0, 0);
             scrollValue = 120;
             lastScrollValue = 0;
             zoom = 1;
 
-            mapSeed = generator.Next(0, 10000);
+            mapSeed = 11534; //generator.Next(0, 10000);
 
             Map.Initialize();
 
@@ -192,19 +193,20 @@ namespace Infinite_World
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin();
+            //_spriteBatch.Begin();
 
             //_spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
-            _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 2400, 2400), Color.White);
 
-            _spriteBatch.End();
+            //_spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            _spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
+            //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
+            _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 800, 800), Color.White);
+
 
             _spriteBatch.End();
 

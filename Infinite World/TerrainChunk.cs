@@ -25,16 +25,19 @@ namespace Infinite_World
 
         public void LoadChunk(int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
-            float[,] heightMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address, 5.0f, 0.06f, 4);
-            float[,] heatMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address, 5.0f, 0.04f, 2);
-            float[,] moistureMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address, 5.0f, 0.03f, 1);
+            float[,] heightMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 5.0f, 0.06f, 4);
+            float[,] heatMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 5.0f, 0.04f, 2);
+            float[,] moistureMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 5.0f, 0.03f, 1);
 
             _texture = Map.GenerateTileMap(heightMap, heatMap, moistureMap, graphics, spriteBatch, biomes);
+            Debug.WriteLine("Chunk Size:" + _texture.Bounds);
+            Debug.WriteLine("Chunk Noise Location" + _address * 100);
+            Debug.WriteLine("Chunk Draw Location" + _address * 1600);
         }
 
         public void DrawChunk(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _address * 800, Color.White);
+            spriteBatch.Draw(_texture, _address * 1600, Color.White);
         }
 
         public Vector2 Address { get { return _address; } }

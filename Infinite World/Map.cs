@@ -83,7 +83,7 @@ namespace Infinite_World
                         feature.Draw(spriteBatch, tilePosition);
                     }
 
-                    tilePosition.Y = (y * 16);
+                    tilePosition.Y = ((y) * 16);
                 }
                 tilePosition.X = (x * 16);
             }
@@ -136,11 +136,13 @@ namespace Infinite_World
             visibleChunks.Add(new TerrainChunk(new Vector2(-1, -1)));
             visibleChunks.Add(new TerrainChunk(new Vector2(0, -1)));
             visibleChunks.Add(new TerrainChunk(new Vector2(1, -1)));
+
+            currentChunkAddress = new Vector2(3, 0);
         }
 
         public static void Update(Vector2 location, int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
-            Vector2 chunkAddress = new Vector2((float)Math.Floor(location.X / -800), (float)Math.Floor(location.Y / -800));
+            Vector2 chunkAddress = new Vector2((float)Math.Floor(location.X / -1600), (float)Math.Floor(location.Y / -1600));
             if (currentChunkAddress != chunkAddress)
             {
                 Debug.WriteLine("Entered New Chunk");
@@ -148,23 +150,24 @@ namespace Infinite_World
                 currentChunkAddress = chunkAddress;
                 visibleChunks.Clear();
 
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y)));
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y)));
 
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y - 1)));
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y - 1)));
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y - 1)));
+                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y - 1)));
+                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y - 1)));
+                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y - 1)));
 
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y + 1)));
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
+                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y + 1)));
+                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
+                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
 
                 foreach (TerrainChunk chunk in visibleChunks)
                 {
                     chunk.LoadChunk(mapSeed, graphics, spriteBatch, biomes);
                 }
                 Debug.WriteLine("Chunks loaded");
+                
 
                 UpdateTexture(spriteBatch, graphics);
             }
@@ -172,9 +175,10 @@ namespace Infinite_World
 
         public static void UpdateTexture(SpriteBatch spritebatch, GraphicsDevice graphics)
         {
-            RenderTarget2D renderTarget = new RenderTarget2D(graphics, 2400, 2400);
+            RenderTarget2D renderTarget = new RenderTarget2D(graphics, 4800, 4800);
 
             graphics.SetRenderTarget(renderTarget);
+            graphics.Clear(Color.CornflowerBlue);
             spritebatch.Begin();
             foreach(TerrainChunk chunk in visibleChunks)
             {
