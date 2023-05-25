@@ -155,13 +155,13 @@ namespace Infinite_World
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y)));
 
-                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y - 1)));
-                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y - 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 1)));
 
-                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y + 1)));
-                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
-                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 2)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 2)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 2)));
 
                 foreach (TerrainChunk chunk in visibleChunks)
                 {

@@ -211,7 +211,7 @@ namespace Infinite_World
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
             _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 1200, 1200), Color.White);
-            _spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
+            //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
             _spriteBatch.End();
 
