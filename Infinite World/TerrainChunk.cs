@@ -23,6 +23,13 @@ namespace Infinite_World
             _texture = null;
         }
 
+        public TerrainChunk(Vector2 location, Vector2 size)
+        {
+            _address = location;
+            _chunkSize = size;
+            _texture = null;
+        }
+
         public void LoadChunk(int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
             float[,] heightMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 5.0f, 0.06f, 4);
@@ -31,6 +38,7 @@ namespace Infinite_World
 
             _texture = Map.GenerateTileMap(heightMap, heatMap, moistureMap, graphics, spriteBatch, biomes);
             Debug.WriteLine("Chunk Size:" + _texture.Bounds);
+            Debug.WriteLine("Chunk Address" + _address);
             Debug.WriteLine("Chunk Noise Location" + _address * 100);
             Debug.WriteLine("Chunk Draw Location" + _address * 1600);
         }
@@ -40,6 +48,7 @@ namespace Infinite_World
             spriteBatch.Draw(_texture, _address * 1600, Color.White);
         }
 
+        public RenderTarget2D Texture { get { return _texture; } }
         public Vector2 Address { get { return _address; } }
     }
 }

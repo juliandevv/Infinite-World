@@ -83,9 +83,10 @@ namespace Infinite_World
                         feature.Draw(spriteBatch, tilePosition);
                     }
 
-                    tilePosition.Y = ((y) * 16);
+                    tilePosition.Y += 16;
                 }
-                tilePosition.X = (x * 16);
+                tilePosition.Y = 0;
+                tilePosition.X += 16;
             }
             spriteBatch.End();
             graphics.SetRenderTarget(null);
@@ -156,7 +157,7 @@ namespace Infinite_World
 
                 //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y - 1)));
                 //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y - 1)));
-                //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y - 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 1)));
 
                 //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X - 1, currentChunkAddress.Y + 1)));
                 //visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
@@ -178,7 +179,7 @@ namespace Infinite_World
             RenderTarget2D renderTarget = new RenderTarget2D(graphics, 4800, 4800);
 
             graphics.SetRenderTarget(renderTarget);
-            graphics.Clear(Color.CornflowerBlue);
+            graphics.Clear(Color.Black);
             spritebatch.Begin();
             foreach(TerrainChunk chunk in visibleChunks)
             {

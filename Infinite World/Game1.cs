@@ -32,6 +32,7 @@ namespace Infinite_World
         List<Tile> tiles = new List<Tile>();
         List<Feature> features = new List<Feature>();
         List<Biome> biomes = new List<Biome>();
+        TerrainChunk testChunk;
 
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
@@ -63,11 +64,14 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = 800;
-            _graphics.PreferredBackBufferWidth = 800;
+            _graphics.PreferredBackBufferHeight = 1200;
+            _graphics.PreferredBackBufferWidth = 1200;
             windowSize = new Point(1920, 1080);
             windowOffset = new Point(0, 0);
             _graphics.ApplyChanges();
+
+            //Chunk Testing
+            testChunk = new TerrainChunk(new Vector2(0, 0), new Vector2(200, 100));
 
             noiseMapDimensions = new Vector2(300, 300);
             Plot heightPlot = new Plot(300, 300);
@@ -105,6 +109,7 @@ namespace Infinite_World
             biomes.Add(new Grassland(new Vector3(0.3f, 0.3f, 0.5f), new List<float>() { 1.5f, 0.4f, 0.3f }));
             biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f), new List<float>() { 0.5f, 0.4f, 0.3f }));
 
+
             base.Initialize();
 
             foreach(Biome biome in biomes)
@@ -112,6 +117,7 @@ namespace Infinite_World
                 biome.Load(Content);
             }
 
+            testChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
             //tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
         }
 
@@ -120,7 +126,6 @@ namespace Infinite_World
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -200,13 +205,13 @@ namespace Infinite_World
             //_spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
-            _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 800, 800), Color.White);
-
+            _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 1200, 1200), Color.White);
+            _spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
             _spriteBatch.End();
 
