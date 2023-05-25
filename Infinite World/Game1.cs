@@ -25,7 +25,7 @@ namespace Infinite_World
         // MAP
         Vector2 mapDimensions;
         Vector2 noiseMapDimensions;
-        Vector2 offsets;
+        Vector2 cameraPosition;
         int mapSeed;
         float zoom;
         float[,] heightMap, heatMap, moistureMap;
@@ -79,13 +79,13 @@ namespace Infinite_World
             Plot moisturePlot = new Plot(300, 300);
 
             mapDimensions = noiseMapDimensions * 8;
-            //offsets = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
-            offsets = new Vector2(0, 0);
+            cameraPosition = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
+            //offsets = new Vector2(0, 0);
             scrollValue = 120;
             lastScrollValue = 0;
             zoom = 1;
 
-            mapSeed = 11534; //generator.Next(0, 10000);
+            mapSeed = generator.Next(0, 10000);
 
             Map.Initialize();
 
@@ -123,6 +123,7 @@ namespace Infinite_World
 
         protected override void LoadContent()
         {
+            grass = Content.Load<Texture2D>(@"Grass");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
@@ -140,26 +141,26 @@ namespace Infinite_World
             if (keyboardState.IsKeyDown(Keys.Left))
             {
                 speed += 0.001f * elapsedTime;
-                offsets.X += speed * elapsedTime;
+                cameraPosition.X += speed * elapsedTime;
 
                 //offsets.X += 5;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
                 speed += 0.001f * elapsedTime;
-                offsets.X -= speed * elapsedTime;
+                cameraPosition.X -= speed * elapsedTime;
                 //offsets.X -= 5; 
             }
             else if (keyboardState.IsKeyDown(Keys.Up))
             {
                 speed += 0.001f * elapsedTime;
-                offsets.Y += speed * elapsedTime;
+                cameraPosition.Y += speed * elapsedTime;
                 //offsets.Y += 5;
             }
             else if (keyboardState.IsKeyDown(Keys.Down))
             {
                 speed += 0.001f * elapsedTime;
-                offsets.Y -= speed * elapsedTime;
+                cameraPosition.Y -= speed * elapsedTime;
                 //offsets.Y -= 5;
             }
             else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
@@ -184,11 +185,11 @@ namespace Infinite_World
                 lastScrollValue = scrollValue;
             }
 
-            Map.Update(offsets, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+            Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
 
-            windowSize = new Point((int)(zoom * 1920), (int)(zoom * 1080));
+            //windowSize = new Point((int)(zoom * 1920), (int)(zoom * 1080));
             //windowOffset = new Point(-(windowSize.X - 1920) / 2, -(windowSize.Y - 1080) / 2);
-            windowOffset = offsets.ToPoint();
+            //windowOffset = cameraPosition.ToPoint();
 
             base.Update(gameTime);
         }
@@ -210,7 +211,8 @@ namespace Infinite_World
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
-            _spriteBatch.Draw(Map.Texture, new Rectangle(0, 0, 1200, 1200), Color.White);
+            _spriteBatch.Draw(Map.Texture, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 4800, 4800), Color.White);
+            //_spriteBatch.Draw(grass, new Rectangle(cameraPosition.ToPoint(), new Point(500, 500)), Color.Black);
             //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
             _spriteBatch.End();
