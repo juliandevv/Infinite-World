@@ -21,6 +21,7 @@ namespace Infinite_World
         List<Texture2D> grasslandTiles = new List<Texture2D>();
         Point windowSize;
         Point windowOffset;
+        Rectangle windowBounds;
 
         // MAP
         Vector2 mapDimensions;
@@ -69,6 +70,8 @@ namespace Infinite_World
             windowSize = new Point(1920, 1080);
             windowOffset = new Point(0, 0);
             _graphics.ApplyChanges();
+
+            windowBounds = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
             //Chunk Testing
             testChunk = new TerrainChunk(new Vector2(0, 0), new Vector2(200, 100));
@@ -138,35 +141,10 @@ namespace Infinite_World
             mouseState = Mouse.GetState();
             elapsedTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                speed += 0.001f * elapsedTime;
-                cameraPosition.X -= speed * elapsedTime;
-            }
-            else if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                speed += 0.001f * elapsedTime;
-                cameraPosition.X += speed * elapsedTime;
-            }
-            else if (keyboardState.IsKeyDown(Keys.Up))
-            {
-                speed += 0.001f * elapsedTime;
-                cameraPosition.Y -= speed * elapsedTime;
-            }
-            else if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                speed += 0.001f * elapsedTime;
-                cameraPosition.Y += speed * elapsedTime;
-            }
-            else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
-            {
-                speed = 0.1f;
-            }
+            UpdateCamera();
 
-            lastKeyboardState = keyboardState;
-            
             scrollValue = mouseState.ScrollWheelValue;
-           
+             
             if (scrollValue != lastScrollValue)
             {
                 zoom = 1 + (scrollValue/240);
@@ -202,6 +180,40 @@ namespace Infinite_World
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void UpdateCamera()
+        {
+            if (windowBounds.Contains(cameraPosition.X, cameraPosition.Y))
+            {
+                if (keyboardState.IsKeyDown(Keys.Left))
+                {
+                    speed += 0.001f * elapsedTime;
+                    cameraPosition.X -= speed * elapsedTime;
+                }
+                else if (keyboardState.IsKeyDown(Keys.Right))
+                {
+                    speed += 0.001f * elapsedTime;
+                    cameraPosition.X += speed * elapsedTime;
+                }
+                else if (keyboardState.IsKeyDown(Keys.Up))
+                {
+                    speed += 0.001f * elapsedTime;
+                    cameraPosition.Y -= speed * elapsedTime;
+                }
+                else if (keyboardState.IsKeyDown(Keys.Down))
+                {
+                    speed += 0.001f * elapsedTime;
+                    cameraPosition.Y += speed * elapsedTime;
+                }
+                else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
+                { 
+                    speed = 0.1f;
+                }
+
+                lastKeyboardState = keyboardState;
+            }
+            
         }
 
         public double[,] FloatToDouble(float[,] floatArray)
