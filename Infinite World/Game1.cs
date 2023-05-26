@@ -12,7 +12,7 @@ namespace Infinite_World
     public class Game1 : Game
     {
         // TEXTURES
-        Texture2D grass;
+        Texture2D camera;
         Texture2D map;
         RenderTarget2D tileMap;
         Texture2D grassTile, shallowWaterTile, deepWaterTile, sandTile, mountainTile;
@@ -79,7 +79,7 @@ namespace Infinite_World
             Plot moisturePlot = new Plot(300, 300);
 
             mapDimensions = noiseMapDimensions * 8;
-            cameraPosition = new Vector2((_graphics.PreferredBackBufferWidth - mapDimensions.X) / 2, (_graphics.PreferredBackBufferHeight - mapDimensions.Y) / 2);
+            cameraPosition = new Vector2(600f, 600f);
             //offsets = new Vector2(0, 0);
             scrollValue = 120;
             lastScrollValue = 0;
@@ -123,7 +123,7 @@ namespace Infinite_World
 
         protected override void LoadContent()
         {
-            grass = Content.Load<Texture2D>(@"Grass");
+            camera = Content.Load<Texture2D>(@"Camera");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
@@ -141,27 +141,22 @@ namespace Infinite_World
             if (keyboardState.IsKeyDown(Keys.Left))
             {
                 speed += 0.001f * elapsedTime;
-                cameraPosition.X += speed * elapsedTime;
-
-                //offsets.X += 5;
+                cameraPosition.X -= speed * elapsedTime;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
                 speed += 0.001f * elapsedTime;
-                cameraPosition.X -= speed * elapsedTime;
-                //offsets.X -= 5; 
+                cameraPosition.X += speed * elapsedTime;
             }
             else if (keyboardState.IsKeyDown(Keys.Up))
             {
                 speed += 0.001f * elapsedTime;
-                cameraPosition.Y += speed * elapsedTime;
-                //offsets.Y += 5;
+                cameraPosition.Y -= speed * elapsedTime;
             }
             else if (keyboardState.IsKeyDown(Keys.Down))
             {
                 speed += 0.001f * elapsedTime;
-                cameraPosition.Y -= speed * elapsedTime;
-                //offsets.Y -= 5;
+                cameraPosition.Y += speed * elapsedTime;
             }
             else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
             {
@@ -171,33 +166,22 @@ namespace Infinite_World
             lastKeyboardState = keyboardState;
             
             scrollValue = mouseState.ScrollWheelValue;
-            //if (scrollValue < 0)
-            //{
-            //    scrollValue *= -1;
-            //}
-
+           
             if (scrollValue != lastScrollValue)
             {
-                //Debug.WriteLine(lastScrollValue);
-                //Debug.WriteLine(scrollValue);
-
                 zoom = 1 + (scrollValue/240);
                 lastScrollValue = scrollValue;
             }
 
             Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
 
-            //windowSize = new Point((int)(zoom * 1920), (int)(zoom * 1080));
-            //windowOffset = new Point(-(windowSize.X - 1920) / 2, -(windowSize.Y - 1080) / 2);
-            //windowOffset = cameraPosition.ToPoint();
-
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.SetRenderTarget(renderTarget);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            //GraphicsDevice.SetRenderTarget(renderTarget);
+            //GraphicsDevice.Clear(Color.CornflowerBlue);
 
             //_spriteBatch.Begin();
 
@@ -211,8 +195,8 @@ namespace Infinite_World
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
-            _spriteBatch.Draw(Map.Texture, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 4800, 4800), Color.White);
-            //_spriteBatch.Draw(grass, new Rectangle(cameraPosition.ToPoint(), new Point(500, 500)), Color.Black);
+            _spriteBatch.Draw(Map.Texture, new Rectangle(-1600, -1600, 4800, 4800), Color.White);
+            _spriteBatch.Draw(camera, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 48, 48), Color.Black);
             //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
             _spriteBatch.End();
