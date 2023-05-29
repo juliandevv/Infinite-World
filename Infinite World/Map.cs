@@ -126,19 +126,29 @@ namespace Infinite_World
             return returnBiome;
         }
 
-        public static void Initialize()
+        public static void Initialize(SpriteBatch spriteBatch, GraphicsDevice graphics, int mapSeed, List<Biome> biomes)
         {
-            visibleChunks.Add(new TerrainChunk(new Vector2(-1, 1)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(0, 1)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(1, 1)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(-1, 0)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(0, 0)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(1, 0)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(-1, -1)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(0, -1)));
-            visibleChunks.Add(new TerrainChunk(new Vector2(1, -1)));
+            currentChunkAddress = new Vector2(-1, -1);
 
-            currentChunkAddress = new Vector2(3, 0);
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y)));
+
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 1)));
+
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 2)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 2)));
+            visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 2)));
+
+            foreach (TerrainChunk chunk in visibleChunks)
+            {
+                chunk.LoadChunk(mapSeed, graphics, spriteBatch, biomes);
+            }
+            Debug.WriteLine("Chunks loaded");
+
+            UpdateTexture(spriteBatch, graphics);
         }
 
         public static void Update(Vector2 location, int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
@@ -151,16 +161,16 @@ namespace Infinite_World
                 currentChunkAddress = chunkAddress;
                 visibleChunks.Clear();
 
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y)));
 
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 1)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 1)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 1)));
 
-                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 2)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X, currentChunkAddress.Y + 2)));
+                visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 1, currentChunkAddress.Y + 2)));
                 visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + 2, currentChunkAddress.Y + 2)));
 
                 foreach (TerrainChunk chunk in visibleChunks)
@@ -169,7 +179,6 @@ namespace Infinite_World
                 }
                 Debug.WriteLine("Chunks loaded");
                 
-
                 UpdateTexture(spriteBatch, graphics);
             }
         }
@@ -181,10 +190,18 @@ namespace Infinite_World
             graphics.SetRenderTarget(renderTarget);
             graphics.Clear(Color.Black);
             spritebatch.Begin();
-            foreach(TerrainChunk chunk in visibleChunks)
+            //foreach(TerrainChunk chunk in visibleChunks)
+            //{
+            //    chunk.DrawChunk(spritebatch);
+            //}
+            for( int i = 0; i < 3; i++)
             {
-                chunk.DrawChunk(spritebatch);
+                for (int j = 0; j < 3; j++)
+                {
+                    spritebatch.Draw(visibleChunks[i].Texture, new Vector2(i * 1600, j * 1600), Color.White);
+                }
             }
+
             spritebatch.End();
             graphics.SetRenderTarget(null);
 

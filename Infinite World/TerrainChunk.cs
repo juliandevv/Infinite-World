@@ -37,10 +37,10 @@ namespace Infinite_World
             float[,] moistureMap = Noise.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 5.0f, 0.03f, 1);
 
             _texture = Map.GenerateTileMap(heightMap, heatMap, moistureMap, graphics, spriteBatch, biomes);
-            Debug.WriteLine("Chunk Size:" + _texture.Bounds);
-            Debug.WriteLine("Chunk Address" + _address);
-            Debug.WriteLine("Chunk Noise Location" + _address * 100);
-            Debug.WriteLine("Chunk Draw Location" + _address * 1600);
+            //Debug.WriteLine("Chunk Size:" + _texture.Bounds);
+            //Debug.WriteLine("Chunk Address" + _address);
+            //Debug.WriteLine("Chunk Noise Location" + _address * 100);
+            //Debug.WriteLine("Chunk Draw Location" + _address * 1600);
         }
 
         public void DrawChunk(SpriteBatch spriteBatch)

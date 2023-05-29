@@ -19,9 +19,11 @@ namespace Infinite_World
         List<Texture2D> trees = new List<Texture2D>();
         //List<Texture2D> desertTiles = new List<Texture2D>();
         List<Texture2D> grasslandTiles = new List<Texture2D>();
+        Vector2 mapOffsets;
         Point windowSize;
         Point windowOffset;
         Rectangle windowBounds;
+        Rectangle cameraBounds;
 
         // MAP
         Vector2 mapDimensions;
@@ -67,11 +69,12 @@ namespace Infinite_World
         {
             _graphics.PreferredBackBufferHeight = 1200;
             _graphics.PreferredBackBufferWidth = 1200;
-            windowSize = new Point(1920, 1080);
+            windowSize = new Point(1920, 1080); 
             windowOffset = new Point(0, 0);
             _graphics.ApplyChanges();
 
             windowBounds = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            cameraBounds = new Rectangle(50, 50, _graphics.PreferredBackBufferWidth - 100, _graphics.PreferredBackBufferHeight - 100);
 
             //Chunk Testing
             testChunk = new TerrainChunk(new Vector2(0, 0), new Vector2(200, 100));
@@ -82,15 +85,16 @@ namespace Infinite_World
             Plot moisturePlot = new Plot(300, 300);
 
             mapDimensions = noiseMapDimensions * 8;
-            cameraPosition = new Vector2(600f, 600f);
+            cameraPosition = new Vector2(600, 600);
+            mapOffsets = new Vector2(cameraPosition.X - 2400, cameraPosition.Y - 2400);
+
             //offsets = new Vector2(0, 0);
             scrollValue = 120;
             lastScrollValue = 0;
             zoom = 1;
+            speed = 5;
 
             mapSeed = generator.Next(0, 10000);
-
-            Map.Initialize();
 
             //heightMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.06f, 4);
             //heatMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.04f, 2);
@@ -119,6 +123,8 @@ namespace Infinite_World
             {
                 biome.Load(Content);
             }
+
+            Map.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
 
             testChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
             //tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
@@ -173,7 +179,7 @@ namespace Infinite_World
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
-            _spriteBatch.Draw(Map.Texture, new Rectangle(-1600, -1600, 4800, 4800), Color.White);
+            _spriteBatch.Draw(Map.Texture, new Rectangle((int)mapOffsets.X, (int)mapOffsets.Y, 4800, 4800), Color.White);
             _spriteBatch.Draw(camera, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 48, 48), Color.Black);
             //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
@@ -184,36 +190,40 @@ namespace Infinite_World
 
         public void UpdateCamera()
         {
-            if (windowBounds.Contains(cameraPosition.X, cameraPosition.Y))
+            if (keyboardState.IsKeyDown(Keys.Left))
             {
-                if (keyboardState.IsKeyDown(Keys.Left))
-                {
-                    speed += 0.001f * elapsedTime;
-                    cameraPosition.X -= speed * elapsedTime;
-                }
-                else if (keyboardState.IsKeyDown(Keys.Right))
-                {
-                    speed += 0.001f * elapsedTime;
-                    cameraPosition.X += speed * elapsedTime;
-                }
-                else if (keyboardState.IsKeyDown(Keys.Up))
-                {
-                    speed += 0.001f * elapsedTime;
-                    cameraPosition.Y -= speed * elapsedTime;
-                }
-                else if (keyboardState.IsKeyDown(Keys.Down))
-                {
-                    speed += 0.001f * elapsedTime;
-                    cameraPosition.Y += speed * elapsedTime;
-                }
-                else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
-                { 
-                    speed = 0.1f;
-                }
-
-                lastKeyboardState = keyboardState;
+                speed += 0.0005f * elapsedTime;
+                cameraPosition.X += speed * elapsedTime;
             }
-            
+            else if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                speed += 0.0005f * elapsedTime;
+                cameraPosition.X -= speed * elapsedTime;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                speed += 0.0005f * elapsedTime;
+                cameraPosition.Y += speed * elapsedTime;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                speed += 0.0005f * elapsedTime;
+                cameraPosition.Y -= speed * elapsedTime;
+            }
+            else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
+            {
+                speed = 0.1f;
+            }
+
+            mapOffsets = new Vector2(cameraPosition.X - 2400, cameraPosition.Y - 2400);
+
+            //if (!cameraBounds.Contains(cameraPosition))
+            //{
+            //    mapOffsets = -cameraPosition + new Vector2(-1600, -1600);
+            //    //Debug.WriteLine(mapOffsets);
+            //}
+
+            lastKeyboardState = keyboardState;
         }
 
         public double[,] FloatToDouble(float[,] floatArray)
