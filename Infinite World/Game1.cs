@@ -158,6 +158,10 @@ namespace Infinite_World
             }
 
             Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+            //if(Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes))
+            //{
+            //    cameraPosition = new Vector2(cameraPosition.X - 1600, cameraPosition.Y);
+            //}
 
             base.Update(gameTime);
         }
@@ -174,12 +178,13 @@ namespace Infinite_World
             //_spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
-            _spriteBatch.Draw(Map.Texture, new Rectangle((int)mapOffsets.X, (int)mapOffsets.Y, 4800, 4800), Color.White);
+            //_spriteBatch.Draw(Map.Texture, Map.Bounds, Color.White);
+            Map.DrawMap(_spriteBatch, mapOffsets);
             _spriteBatch.Draw(camera, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 48, 48), Color.Black);
             //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
