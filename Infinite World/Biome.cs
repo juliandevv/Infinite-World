@@ -40,7 +40,7 @@ namespace Infinite_World
         private List<Feature> _features = new List<Feature>();
         private Vector3 _minValues = new Vector3();
 
-        public Desert(Vector3 minValues, List<float> maxValues)
+        public Desert(Vector3 minValues)
         {
             _minValues = minValues;
         }
@@ -90,7 +90,7 @@ namespace Infinite_World
         private Vector3 _minValues = new Vector3();
         private List<Feature> _features = new List<Feature>();
 
-        public Grassland(Vector3 minValues, List<float> maxValues)
+        public Grassland(Vector3 minValues)
         {
             _minValues = minValues;
         }
@@ -145,7 +145,7 @@ namespace Infinite_World
         private Vector3 _minValues = new Vector3();
         private List<Feature> _features = new List<Feature>();
 
-        public Ocean(Vector3 minValues, List<float> maxValues)
+        public Ocean(Vector3 minValues)
         {
             _minValues = minValues;
         }
@@ -154,6 +154,56 @@ namespace Infinite_World
         {
             _tiles.Add(new Tile(new Vector2(0.0f, 0.27f), content.Load<Texture2D>(@"Tiles\DeepWaterTile2")));
             _tiles.Add(new Tile(new Vector2(0.27f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+        }
+
+        public override Vector3 MinValues { get { return _minValues; } }
+
+        public override float GetMatchValue(Vector3 values)
+        {
+            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            return matchValue;
+        }
+
+        public override Tile GetTile(Vector3 values)
+        {
+            foreach (Tile tile in _tiles)
+            {
+                if (tile.SatisfyCondition(values.X))
+                {
+                    return tile;
+                }
+            }
+            return _tiles[_generator.Next(0, _tiles.Count)];
+        }
+
+        public override Feature GetFeature(Vector3 values)
+        {
+            foreach (Feature feature in _features)
+            {
+                if (feature.SatisfyCondition(values.X))
+                {
+                    return feature;
+                }
+            }
+            return null;
+        }
+    }
+
+    class Jungle : Biome
+    {
+        private List<Tile> _tiles = new List<Tile>();
+        private Vector3 _minValues = new Vector3();
+        private List<Feature> _features = new List<Feature>();
+
+        public Jungle(Vector3 minValues)
+        {
+            _minValues = minValues;
+        }
+
+        public override void Load(ContentManager content)
+        {
+            _tiles.Add(new Tile(new Vector2(0.0f, 1.55f), content.Load<Texture2D>(@"Tiles\JungleTile1")));
+            //_tiles.Add(new Tile(new Vector2(0.27f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
         }
 
         public override Vector3 MinValues { get { return _minValues; } }

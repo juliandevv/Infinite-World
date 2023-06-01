@@ -30,6 +30,7 @@ namespace Infinite_World
         TerrainChunk testChunk;
         ChunkLoader chunkLoader;
         List<TerrainChunk> visibleChunks = new List<TerrainChunk> ();
+        List<TerrainChunk> lastVisibleChunks = new List<TerrainChunk>();
 
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
@@ -57,8 +58,8 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = 1200;
-            _graphics.PreferredBackBufferWidth = 1200;
+            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 1920;
             windowSize = new Point(1920, 1080); 
             windowOffset = new Point(0, 0);
             _graphics.ApplyChanges();
@@ -104,9 +105,10 @@ namespace Infinite_World
             //    Debug.WriteLine(value);
             //}
 
-            biomes.Add(new Desert(new Vector3(0.3f, 0.6f, 0.0f), new List<float>() { 0.7f, 1.5f, 0.3f }));
-            biomes.Add(new Grassland(new Vector3(0.3f, 0.3f, 0.5f), new List<float>() { 1.5f, 0.4f, 0.3f }));
-            biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f), new List<float>() { 0.5f, 0.4f, 0.3f }));
+            biomes.Add(new Desert(new Vector3(0.3f, 0.6f, 0.0f)));
+            biomes.Add(new Grassland(new Vector3(0.3f, 0.3f, 0.5f)));
+            biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f)));
+            biomes.Add(new Jungle(new Vector3(0.3f, 0.7f, 0.9f)));
 
 
             base.Initialize();
@@ -117,7 +119,8 @@ namespace Infinite_World
             }
 
             //Map.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
-            visibleChunks = chunkLoader.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
+            visibleChunks = chunkLoader.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes, 4);
+            lastVisibleChunks = visibleChunks;
 
             testChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
             //tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
@@ -158,8 +161,8 @@ namespace Infinite_World
                     chunk.Texture.Dispose();
                 }
 
-                visibleChunks.Clear();
-                visibleChunks = chunkLoader.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+                visibleChunks = chunkLoader.Update(mapSeed, GraphicsDevice, _spriteBatch, biomes, 4);
+                lastVisibleChunks = visibleChunks;
             }
 
             base.Update(gameTime);
