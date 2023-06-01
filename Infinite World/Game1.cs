@@ -13,12 +13,6 @@ namespace Infinite_World
     {
         // TEXTURES
         Texture2D camera;
-        Texture2D map;
-        RenderTarget2D tileMap;
-        Texture2D grassTile, shallowWaterTile, deepWaterTile, sandTile, mountainTile;
-        List<Texture2D> trees = new List<Texture2D>();
-        //List<Texture2D> desertTiles = new List<Texture2D>();
-        List<Texture2D> grasslandTiles = new List<Texture2D>();
         Vector2 mapOffsets;
         Point windowSize;
         Point windowOffset;
@@ -32,25 +26,21 @@ namespace Infinite_World
         int mapSeed;
         float zoom;
         float[,] heightMap, heatMap, moistureMap;
-        List<Tile> tiles = new List<Tile>();
-        List<Feature> features = new List<Feature>();
         List<Biome> biomes = new List<Biome>();
         TerrainChunk testChunk;
+        ChunkLoader chunkLoader;
+        List<TerrainChunk> visibleChunks = new List<TerrainChunk> ();
 
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
         MouseState mouseState;
         float lastScrollValue;
         float scrollValue;
-        double keyDownTime;
-        double keyPressTime;
         float elapsedTime;
         float speed;
-        double acceleration;
 
         // GRAPHICS
         RenderTarget2D renderTarget;
-        float renderScale = 0.44444f;
 
         //MISC
         Random generator = new Random();
@@ -78,6 +68,8 @@ namespace Infinite_World
 
             //Chunk Testing
             testChunk = new TerrainChunk(new Vector2(0, 0), new Vector2(200, 100));
+
+            chunkLoader = new ChunkLoader();
 
             noiseMapDimensions = new Vector2(300, 300);
             Plot heightPlot = new Plot(300, 300);
@@ -124,7 +116,8 @@ namespace Infinite_World
                 biome.Load(Content);
             }
 
-            Map.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
+            //Map.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
+            visibleChunks = chunkLoader.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
 
             testChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
             //tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
@@ -157,11 +150,17 @@ namespace Infinite_World
                 lastScrollValue = scrollValue;
             }
 
-            Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
-            //if(Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes))
-            //{
-            //    cameraPosition = new Vector2(cameraPosition.X - 1600, cameraPosition.Y);
-            //}
+            //Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+            if (chunkLoader.NewChunk(cameraPosition))
+            {
+                foreach(TerrainChunk chunk in visibleChunks)
+                {
+                    chunk.Texture.Dispose();
+                }
+
+                visibleChunks.Clear();
+                visibleChunks = chunkLoader.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+            }
 
             base.Update(gameTime);
         }
@@ -184,7 +183,8 @@ namespace Infinite_World
 
             //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
             //_spriteBatch.Draw(Map.Texture, Map.Bounds, Color.White);
-            Map.DrawMap(_spriteBatch, mapOffsets);
+            //Map.DrawMap(_spriteBatch, mapOffsets);
+            chunkLoader.DrawMap(_spriteBatch, mapOffsets, visibleChunks);
             _spriteBatch.Draw(camera, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 48, 48), Color.Black);
             //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 

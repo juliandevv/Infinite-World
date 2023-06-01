@@ -11,7 +11,8 @@ namespace Infinite_World
 {
     internal class Noise
     {
-        public static float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, float scale, float frequency, int octaves)
+        public Noise() { }
+        public float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, float scale, float frequency, int octaves)
         {
             float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
@@ -39,7 +40,7 @@ namespace Infinite_World
             return Normalize(noiseMap);
         }
 
-        public static float[,] Normalize(float[,] noiseMap)
+        public float[,] Normalize(float[,] noiseMap)
         {
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
@@ -61,7 +62,7 @@ namespace Infinite_World
             return noiseMap;
         }
 
-        public static float[,] Amplify(float[,] noiseMap)
+        public float[,] Amplify(float[,] noiseMap)
         {
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
