@@ -25,13 +25,13 @@ namespace Infinite_World
             get;
         }
 
-        public abstract float GetMatchValue(Vector3 values);
+        public abstract float GetMatchValue(float heightValue, float heatValue, float moistureValue);
 
         public abstract void Load(ContentManager content);
 
-        public abstract Tile GetTile(Vector3 values);
+        public abstract Tile GetTile(float heightValue);
 
-        public abstract Feature GetFeature(Vector3 values);
+        public abstract Feature GetFeature(float heightValue);
     }
 
     class Desert : Biome
@@ -53,17 +53,17 @@ namespace Infinite_World
 
         public override Vector3 MinValues{ get{ return _minValues; } }
        
-        public override float GetMatchValue(Vector3 values)
+        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
         {
-            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(Vector3 values)
+        public override Tile GetTile(float heightValue)
         {
             foreach (Tile tile in _tiles)
             {
-                if (tile.SatisfyCondition(values.X))
+                if (tile.SatisfyCondition(heightValue))
                 {
                     return tile;
                 }
@@ -71,11 +71,11 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(Vector3 values)
+        public override Feature GetFeature(float heightValue)
         {
             foreach (Feature feature in _features)
             {
-                if (feature.SatisfyCondition(values.X))
+                if (feature.SatisfyCondition(heightValue))
                 {
                     return feature;
                 }
@@ -108,17 +108,17 @@ namespace Infinite_World
 
         public override Vector3 MinValues { get { return _minValues; } }
 
-        public override float GetMatchValue(Vector3 values)
+        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
         {
-            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(Vector3 values)
+        public override Tile GetTile(float heightValue)
         {
             foreach (Tile tile in _tiles)
             {
-                if (tile.SatisfyCondition(values.X))
+                if (tile.SatisfyCondition(heightValue))
                 {
                     return tile;
                 }
@@ -126,11 +126,11 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(Vector3 values)
+        public override Feature GetFeature(float heightValue)
         {
             foreach (Feature feature in _features)
             {
-                if (feature.SatisfyCondition(values.X))
+                if (feature.SatisfyCondition(heightValue))
                 {
                     return feature;
                 }
@@ -158,17 +158,17 @@ namespace Infinite_World
 
         public override Vector3 MinValues { get { return _minValues; } }
 
-        public override float GetMatchValue(Vector3 values)
+        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
         {
-            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(Vector3 values)
+        public override Tile GetTile(float heightValue)
         {
             foreach (Tile tile in _tiles)
             {
-                if (tile.SatisfyCondition(values.X))
+                if (tile.SatisfyCondition(heightValue))
                 {
                     return tile;
                 }
@@ -176,11 +176,11 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(Vector3 values)
+        public override Feature GetFeature(float heightValue)
         {
             foreach (Feature feature in _features)
             {
-                if (feature.SatisfyCondition(values.X))
+                if (feature.SatisfyCondition(heightValue))
                 {
                     return feature;
                 }
@@ -208,17 +208,17 @@ namespace Infinite_World
 
         public override Vector3 MinValues { get { return _minValues; } }
 
-        public override float GetMatchValue(Vector3 values)
+        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
         {
-            float matchValue = (values.X - _minValues.X) + (values.Y - _minValues.Y) + (values.Z - _minValues.Z);
+            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(Vector3 values)
+        public override Tile GetTile(float heightValue)
         {
             foreach (Tile tile in _tiles)
             {
-                if (tile.SatisfyCondition(values.X))
+                if (tile.SatisfyCondition(heightValue))
                 {
                     return tile;
                 }
@@ -226,11 +226,11 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(Vector3 values)
+        public override Feature GetFeature(float heightValue)
         {
             foreach (Feature feature in _features)
             {
-                if (feature.SatisfyCondition(values.X))
+                if (feature.SatisfyCondition(heightValue))
                 {
                     return feature;
                 }

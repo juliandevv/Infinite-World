@@ -45,6 +45,7 @@ namespace Infinite_World
 
         //MISC
         Random generator = new Random();
+        Noise noiseGenerator = new Noise();
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -89,16 +90,16 @@ namespace Infinite_World
 
             mapSeed = generator.Next(0, 10000);
 
-            //heightMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.06f, 4);
-            //heatMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.04f, 2);
-            //moistureMap = Noise.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0f, 0.03f, 1);
+            heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0, 0.06f, 4);
+            heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04f, 2);
+            moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03f, 1);
 
-            //heightPlot.AddHeatmap(FloatToDouble(heightMap));
-            //heightPlot.SaveFig("heightMap.png");
-            //heatPlot.AddHeatmap(FloatToDouble(heatMap));
-            //heatPlot.SaveFig("heatmap.png");
-            //moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
-            //moisturePlot.SaveFig("moistureMap.png");
+            heightPlot.AddHeatmap(FloatToDouble(heightMap));
+            heightPlot.SaveFig("heightMap.png");
+            heatPlot.AddHeatmap(FloatToDouble(heatMap));
+            heatPlot.SaveFig("heatmap.png");
+            moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
+            moisturePlot.SaveFig("moistureMap.png");
 
             //foreach (float value in heatMap)
             //{

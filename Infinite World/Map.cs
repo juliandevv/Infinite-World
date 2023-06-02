@@ -69,13 +69,13 @@ namespace Infinite_World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    values.X = heightMap[x, y];
-                    values.Y = heatMap[x, y];
-                    values.Z = moistureMap[x, y];
+                    float heightValue = heightMap[x, y];
+                    float heatValue = heatMap[x, y];
+                    float moistureValue = moistureMap[x, y];
 
-                    biome = GetBiome(biomes, values);
-                    biome.GetTile(values).Draw(spriteBatch, tilePosition);
-                    feature = biome.GetFeature(values);
+                    biome = GetBiome(biomes, heightValue, heatValue, moistureValue);
+                    biome.GetTile(heightValue).Draw(spriteBatch, tilePosition);
+                    feature = biome.GetFeature(heightValue);
                     if (feature != null)
                     {
                         feature.Draw(spriteBatch, tilePosition);
@@ -92,7 +92,7 @@ namespace Infinite_World
             return renderTarget;
         }
 
-        public Biome GetBiome(List<Biome> biomes, Vector3 values)
+        public Biome GetBiome(List<Biome> biomes, float heightValue, float heatValue, float moistureValue)
         {
             List<Biome> matches = new List<Biome>();
             Biome returnBiome = biomes[0];
@@ -103,7 +103,7 @@ namespace Infinite_World
 
             foreach (Biome biome in biomes)
             {
-                if (values.X >= biome.MinValues.X && values.Y >= biome.MinValues.Y && values.Z >= biome.MinValues.Z)
+                if (heightValue >= biome.MinValues.X && heatValue >= biome.MinValues.Y && moistureValue >= biome.MinValues.Z)
                 {
                     matches.Add(biome);
                 }
@@ -112,11 +112,11 @@ namespace Infinite_World
             foreach (Biome match in matches)
             {
                 //Debug.WriteLine();
-                if (match.GetMatchValue(values) < matchValue)
+                if (match.GetMatchValue(heightValue, heatValue, moistureValue) < matchValue)
                 {
                     //Debug.WriteLine("Biome Match");
                     returnBiome = match;
-                    matchValue = match.GetMatchValue(values);
+                    matchValue = match.GetMatchValue(heightValue, heatValue, moistureValue);
                     //Debug.WriteLine(matchValue);
                 }
             }
