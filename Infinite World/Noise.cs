@@ -17,7 +17,10 @@ namespace Infinite_World
         {
             float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
+            Random generator = new Random(seed);
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            float offsetX = generator.Next(-100000, 100000) + offsets.X;
+            float offsetY = generator.Next(-100000, 100000) + offsets.Y;
 
             //dont change these look good
             noise.SetSeed(seed);
@@ -31,8 +34,8 @@ namespace Infinite_World
             {
                 for (int y = 0; y < dimensions.Y; y++)
                 {
-                    double sampleX = (x + (double)offsets.X) / scale;
-                    double sampleY = (y + (double)offsets.Y) / scale;
+                    double sampleX = x / scale + offsetX;
+                    double sampleY = y / scale + offsetY;
 
                     noiseMap[x,y] = noise.GetNoise((float)sampleX, (float)sampleY);
                 }
