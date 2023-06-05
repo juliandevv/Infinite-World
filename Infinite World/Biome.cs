@@ -25,13 +25,13 @@ namespace Infinite_World
             get;
         }
 
-        public abstract float GetMatchValue(float heightValue, float heatValue, float moistureValue);
+        public abstract double GetMatchValue(double heightValue, double heatValue, double moistureValue);
 
         public abstract void Load(ContentManager content);
 
-        public abstract Tile GetTile(float heightValue);
+        public abstract Tile GetTile(double heightValue);
 
-        public abstract Feature GetFeature(float heightValue);
+        public abstract Feature GetFeature(double heightValue);
     }
 
     class Desert : Biome
@@ -53,13 +53,13 @@ namespace Infinite_World
 
         public override Vector3 MinValues{ get{ return _minValues; } }
        
-        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
+        public override double GetMatchValue(double heightValue, double heatValue, double moistureValue)
         {
-            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
+            double matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(float heightValue)
+        public override Tile GetTile(double heightValue)
         {
             foreach (Tile tile in _tiles)
             {
@@ -71,7 +71,7 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(float heightValue)
+        public override Feature GetFeature(double heightValue)
         {
             foreach (Feature feature in _features)
             {
@@ -108,13 +108,13 @@ namespace Infinite_World
 
         public override Vector3 MinValues { get { return _minValues; } }
 
-        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
+        public override double GetMatchValue(double heightValue, double heatValue, double moistureValue)
         {
-            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
+            double matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(float heightValue)
+        public override Tile GetTile(double heightValue)
         {
             foreach (Tile tile in _tiles)
             {
@@ -126,7 +126,7 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(float heightValue)
+        public override Feature GetFeature(double heightValue)
         {
             foreach (Feature feature in _features)
             {
@@ -158,13 +158,13 @@ namespace Infinite_World
 
         public override Vector3 MinValues { get { return _minValues; } }
 
-        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
+        public override double GetMatchValue(double heightValue, double heatValue, double moistureValue)
         {
-            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
+            double matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(float heightValue)
+        public override Tile GetTile(double heightValue)
         {
             foreach (Tile tile in _tiles)
             {
@@ -176,7 +176,7 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(float heightValue)
+        public override Feature GetFeature(double heightValue)
         {
             foreach (Feature feature in _features)
             {
@@ -208,13 +208,13 @@ namespace Infinite_World
 
         public override Vector3 MinValues { get { return _minValues; } }
 
-        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
+        public override double GetMatchValue(double heightValue, double heatValue, double moistureValue)
         {
-            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
+            double matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
             return matchValue;
         }
 
-        public override Tile GetTile(float heightValue)
+        public override Tile GetTile(double heightValue)
         {
             foreach (Tile tile in _tiles)
             {
@@ -226,7 +226,7 @@ namespace Infinite_World
             return _tiles[_generator.Next(0, _tiles.Count)];
         }
 
-        public override Feature GetFeature(float heightValue)
+        public override Feature GetFeature(double heightValue)
         {
             foreach (Feature feature in _features)
             {

@@ -47,12 +47,12 @@ namespace Infinite_World
             return texture;
         }
 
-        public RenderTarget2D GenerateTileMap(float[,] heightMap, float[,] heatMap, float[,] moistureMap, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
+        public RenderTarget2D GenerateTileMap(double[,] heightMap, double[,] heatMap, double[,] moistureMap, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes)
         {
             int width = heightMap.GetLength(0);
             int height = heightMap.GetLength(1);
             //int tileLength = tiles[0].Length;
-            int[,] rectGrid = Jitter.JitterGrid(heightMap);
+            //int[,] rectGrid = Jitter.JitterGrid(heightMap);
 
             //Tile drawTile;
             Feature feature;
@@ -69,9 +69,9 @@ namespace Infinite_World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    float heightValue = heightMap[x, y];
-                    float heatValue = heatMap[x, y];
-                    float moistureValue = moistureMap[x, y];
+                    double heightValue = heightMap[x, y];
+                    double heatValue = heatMap[x, y];
+                    double moistureValue = moistureMap[x, y];
 
                     biome = GetBiome(biomes, heightValue, heatValue, moistureValue);
                     biome.GetTile(heightValue).Draw(spriteBatch, tilePosition);
@@ -92,11 +92,11 @@ namespace Infinite_World
             return renderTarget;
         }
 
-        public Biome GetBiome(List<Biome> biomes, float heightValue, float heatValue, float moistureValue)
+        public Biome GetBiome(List<Biome> biomes, double heightValue, double heatValue, double moistureValue)
         {
             List<Biome> matches = new List<Biome>();
             Biome returnBiome = biomes[0];
-            float matchValue = 10;
+            double matchValue = 10;
             //Debug.WriteLine("x value: " + values.X);
             //Debug.WriteLine("y value: " + values.Y);
             //Debug.WriteLine("z value: " + values.Z);

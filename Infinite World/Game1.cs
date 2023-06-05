@@ -25,7 +25,7 @@ namespace Infinite_World
         Vector2 cameraPosition;
         int mapSeed;
         float zoom;
-        float[,] heightMap, heatMap, moistureMap;
+        double[,] heightMap, heatMap, moistureMap;
         List<Biome> biomes = new List<Biome>();
         TerrainChunk testChunk;
         ChunkLoader chunkLoader;
@@ -90,15 +90,15 @@ namespace Infinite_World
 
             mapSeed = generator.Next(0, 10000);
 
-            heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0, 0.06f, 4);
-            heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04f, 2);
-            moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03f, 1);
+            heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 3.0, 0.06, 4);
+            heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04, 2);
+            moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03, 1);
 
-            heightPlot.AddHeatmap(FloatToDouble(heightMap));
+            heightPlot.AddHeatmap(heightMap);
             heightPlot.SaveFig("heightMap.png");
-            heatPlot.AddHeatmap(FloatToDouble(heatMap));
+            heatPlot.AddHeatmap(heatMap);
             heatPlot.SaveFig("heatmap.png");
-            moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
+            moisturePlot.AddHeatmap(moistureMap);
             moisturePlot.SaveFig("moistureMap.png");
 
             //foreach (float value in heatMap)

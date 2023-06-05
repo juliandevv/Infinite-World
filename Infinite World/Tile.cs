@@ -25,7 +25,7 @@ namespace Infinite_World
             //_biome = biome;
         }
 
-        public bool SatisfyCondition(float noiseValue)
+        public bool SatisfyCondition(double noiseValue)
         {
             //Debug.WriteLine(noiseValue);
             if (noiseValue >= _conditions.X && noiseValue < _conditions.Y)

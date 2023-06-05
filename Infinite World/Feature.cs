@@ -24,7 +24,7 @@ namespace Infinite_World
             _generator = new Random();
         }
 
-        public bool SatisfyCondition(float noiseValue)
+        public bool SatisfyCondition(double noiseValue)
         {
             //Debug.WriteLine(noiseValue);
             if (noiseValue >= _conditions.X && noiseValue < _conditions.Y && _generator.Next(0,(int)(10 / _abundance)) == 1)
