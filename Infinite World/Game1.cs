@@ -6,6 +6,7 @@ using System.Diagnostics;
 using ScottPlot;
 using System.Linq;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Infinite_World
 {
@@ -90,16 +91,16 @@ namespace Infinite_World
 
             mapSeed = generator.Next(0, 10000);
 
-            heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 3.0, 0.06, 4);
-            heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04, 2);
-            moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03, 1);
+            //heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 1, 4, 0.3, 0.4);
+            //heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 1, 2, 0.3, 0.4);
+            //moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 1, 2, 0.3, 0.4);
 
-            heightPlot.AddHeatmap(heightMap);
-            heightPlot.SaveFig("heightMap.png");
-            heatPlot.AddHeatmap(heatMap);
-            heatPlot.SaveFig("heatmap.png");
-            moisturePlot.AddHeatmap(moistureMap);
-            moisturePlot.SaveFig("moistureMap.png");
+            //heightPlot.AddHeatmap(heightMap);
+            //heightPlot.SaveFig("heightMap.png");
+            //heatPlot.AddHeatmap(heatMap);
+            //heatPlot.SaveFig("heatmap.png");
+            //moisturePlot.AddHeatmap(moistureMap);
+            //moisturePlot.SaveFig("moistureMap.png");
 
             //foreach (float value in heatMap)
             //{

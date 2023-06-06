@@ -13,14 +13,42 @@ namespace Infinite_World
     {
         public Noise() { }
 
-        public float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, float frequency, int octaves)
+        //public float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, float frequency, int octaves)
+        //{
+        //    float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
+        //    FastNoiseLite noise = new FastNoiseLite();
+        //    Random generator = new Random(seed);
+        //    noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        //    float offsetX = generator.Next(-100000, 100000) + offsets.X;
+        //    float offsetY = generator.Next(-100000, 100000) + offsets.Y;
+
+        //    //dont change these look good
+        //    noise.SetSeed(seed);
+        //    noise.SetFrequency(frequency); //0.05f for height
+        //    noise.SetFractalOctaves(octaves); //4 for height
+        //    noise.SetFractalLacunarity(2f);
+        //    noise.SetFractalGain(0.3f);
+        //    noise.SetFractalType(FastNoiseLite.FractalType.FBm);
+
+        //    for (int x = 0; x < dimensions.X; x++)
+        //    {
+        //        for (int y = 0; y < dimensions.Y; y++)
+        //        {
+        //            double sampleX = x / scale + offsetX;
+        //            double sampleY = y / scale + offsetY;
+
+        //            noiseMap[x,y] = noise.GetNoise((float)sampleX, (float)sampleY);
+        //        }
+        //    }
+
+        //    return Normalize(noiseMap);
+        //}
+
+        public double[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, float frequency, int octaves)
         {
-            float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
+            double[,] noiseMap = new double[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
-            Random generator = new Random(seed);
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-            float offsetX = generator.Next(-100000, 100000) + offsets.X;
-            float offsetY = generator.Next(-100000, 100000) + offsets.Y;
 
             //dont change these look good
             noise.SetSeed(seed);
@@ -34,62 +62,48 @@ namespace Infinite_World
             {
                 for (int y = 0; y < dimensions.Y; y++)
                 {
-                    double sampleX = x / scale + offsetX;
-                    double sampleY = y / scale + offsetY;
+                    double sampleX = (x / scale) + (double)offsets.X;
+                    double sampleY = (y / scale) + (double)offsets.Y;
 
-                    noiseMap[x,y] = noise.GetNoise((float)sampleX, (float)sampleY);
+                    noiseMap[x, y] = noise.GetNoise(sampleX, sampleY);
                 }
             }
 
             return Normalize(noiseMap);
         }
 
-        //public double[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, double frequency, int octaves)
+        //public double[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, int octaves, double persistance, double lacunarity)
         //{
         //    double[,] noiseMap = new double[(int)dimensions.X, (int)dimensions.Y];
-        //    FastNoise noise = new FastNoise();
-        //    noise.SetNoiseType(FastNoise.NoiseType.SimplexFractal);
-
-        //    //dont change these look good
-        //    noise.SetSeed(seed);
-        //    noise.SetFrequency(frequency); //0.05f for height
-        //    noise.SetFractalOctaves(octaves); //4 for height
-        //    noise.SetFractalLacunarity(2f);
-        //    noise.SetFractalGain(0.3f);
-        //    noise.SetFractalType(FastNoise.FractalType.FBM);
+        //    Perlin perlinGenerator = new Perlin();
+        //    Random generator = new Random(seed);
 
         //    for (int x = 0; x < dimensions.X; x++)
         //    {
         //        for (int y = 0; y < dimensions.Y; y++)
         //        {
-        //            double sampleX = (x + (double)offsets.X) / scale;
-        //            double sampleY = (y + (double)offsets.Y) / scale;
+        //            double frequency = 1;
+        //            double amplitude = 1;
 
-        //            noiseMap[x, y] = noise.GetNoise(sampleX, sampleY);
+        //            for (int i = 0; i < octaves; i++)
+        //            {
+        //                float offsetX = generator.Next(-100000, 100000) + offsets.X;
+        //                float offsetY = generator.Next(-100000, 100000) + offsets.Y;
+        //                double sampleX = (x / scale * frequency) + offsetX;
+        //                double sampleY = (y / scale * frequency) + offsetY;
+
+        //                double perlinValue = perlinGenerator.perlin(sampleX, sampleY, 0);
+
+        //                noiseMap[x, y] += perlinValue * amplitude;
+
+        //                amplitude *= persistance;
+        //                frequency *= lacunarity;
+        //            }
         //        }
         //    }
 
-        //    return Normalize(noiseMap);
+        //    return noiseMap;
         //}
-
-        public double[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, double frequency, int octaves)
-        {
-            double[,] noiseMap = new double[(int)dimensions.X, (int)dimensions.Y];
-            Perlin perlinGenerator = new Perlin();
-
-            for (int x = 0; x < dimensions.X; x++)
-            {
-                for (int y = 0; y < dimensions.Y; y++)
-                {
-                    double sampleX = (x + (double)offsets.X) / scale;
-                    double sampleY = (y + (double)offsets.Y) / scale;
-
-                    noiseMap[x, y] = perlinGenerator.OctavePerlin(sampleX, sampleY, 0, 4, 0.3);
-                }
-            }
-
-            return Normalize(noiseMap);
-        }
 
         public float[,] Normalize(float[,] noiseMap)
         {
