@@ -34,8 +34,8 @@ namespace Infinite_World
             {
                 for (int y = 0; y < dimensions.Y; y++)
                 {
-                    double sampleX = x / scale + offsetX;
-                    double sampleY = y / scale + offsetY;
+                    double sampleX = (x + offsetX) / scale;
+                    double sampleY = (y + offsetY) / scale;
 
                     noiseMap[x,y] = noise.GetNoise((float)sampleX, (float)sampleY);
                 }

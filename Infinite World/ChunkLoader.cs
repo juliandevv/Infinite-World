@@ -40,25 +40,23 @@ namespace Infinite_World
             return visibleChunks;
         }
 
-        public List<TerrainChunk> Update(int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes, int viewDistance)
+        public List<TerrainChunk> Update(int mapSeed, GraphicsDevice graphics, SpriteBatch spriteBatch, List<Biome> biomes, int viewDistance, List<TerrainChunk> lastVisibleChunks)
         {
             List<TerrainChunk> visibleChunks = new List<TerrainChunk>();
+            List<Vector2> visibleChunkAddresses = new List<Vector2>();
             Vector2 address;
+
 
             for (int i = 0; i < viewDistance; i++)
             {
                 for (int j = 0; j < viewDistance; j++)
                 {
-                    //address = new Vector2(j, i);
-                    //foreach (TerrainChunk chunk in lastVisibleChunks)
-                    //{
-                    //    if (chunk.Address != address)
-                    //    {
-                    //        visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + j, currentChunkAddress.Y + i)));
-                    //    }
-                    //}
+                    address = new Vector2(currentChunkAddress.X + j, currentChunkAddress.Y + i);
+                    if (!visibleChunkAddresses.Contains(address))
+                    {
+                        visibleChunks.Add(new TerrainChunk(address));
 
-                    visibleChunks.Add(new TerrainChunk(new Vector2(currentChunkAddress.X + j, currentChunkAddress.Y + i)));
+                    }
                 }
             }
 

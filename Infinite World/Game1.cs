@@ -31,6 +31,8 @@ namespace Infinite_World
         ChunkLoader chunkLoader;
         List<TerrainChunk> visibleChunks = new List<TerrainChunk> ();
         List<TerrainChunk> lastVisibleChunks = new List<TerrainChunk>();
+        int halfBufferWidth;
+        int halfBufferHeight;
 
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
@@ -39,6 +41,7 @@ namespace Infinite_World
         float scrollValue;
         float elapsedTime;
         float speed;
+        Player player;
 
         // GRAPHICS
         RenderTarget2D renderTarget;
@@ -61,9 +64,13 @@ namespace Infinite_World
         {
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.ApplyChanges();
+
+            halfBufferWidth = _graphics.PreferredBackBufferWidth / 2;
+            halfBufferHeight = _graphics.PreferredBackBufferHeight / 2;
+
             windowSize = new Point(1920, 1080); 
             windowOffset = new Point(0, 0);
-            _graphics.ApplyChanges();
 
             windowBounds = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             cameraBounds = new Rectangle(50, 50, _graphics.PreferredBackBufferWidth - 100, _graphics.PreferredBackBufferHeight - 100);
@@ -119,6 +126,8 @@ namespace Infinite_World
                 biome.Load(Content);
             }
 
+            player = new Player(camera);
+
             //Map.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
             visibleChunks = chunkLoader.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes, 4);
             lastVisibleChunks = visibleChunks;
@@ -142,6 +151,9 @@ namespace Infinite_World
 
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
+
+            player.Update(mouseState);
+
             elapsedTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             UpdateCamera();
@@ -162,7 +174,7 @@ namespace Infinite_World
                     chunk.Texture.Dispose();
                 }
 
-                visibleChunks = chunkLoader.Update(mapSeed, GraphicsDevice, _spriteBatch, biomes, 4);
+                visibleChunks = chunkLoader.Update(mapSeed, GraphicsDevice, _spriteBatch, biomes, 4, lastVisibleChunks);
                 lastVisibleChunks = visibleChunks;
             }
 
@@ -189,7 +201,7 @@ namespace Infinite_World
             //_spriteBatch.Draw(Map.Texture, Map.Bounds, Color.White);
             //Map.DrawMap(_spriteBatch, mapOffsets);
             chunkLoader.DrawMap(_spriteBatch, mapOffsets, visibleChunks);
-            _spriteBatch.Draw(camera, new Rectangle((int)cameraPosition.X, (int)cameraPosition.Y, 48, 48), Color.Black);
+            player.Draw(_spriteBatch);
             //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
 
             _spriteBatch.End();
@@ -225,12 +237,7 @@ namespace Infinite_World
             }
 
             mapOffsets = new Vector2(cameraPosition.X - 2400, cameraPosition.Y - 2400);
-
-            //if (!cameraBounds.Contains(cameraPosition))
-            //{
-            //    mapOffsets = -cameraPosition + new Vector2(-1600, -1600);
-            //    //Debug.WriteLine(mapOffsets);
-            //}
+            //Debug.WriteLine("camerPosition: " + cameraPosition);
 
             lastKeyboardState = keyboardState;
         }

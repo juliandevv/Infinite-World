@@ -36,9 +36,9 @@ namespace Infinite_World
             mapGenerator = new Map();
             noiseGenerator = new Noise();
 
-            float[,] heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0f, 0.06f, 4);
-            float[,] heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 10f, 0.04f, 2);
-            float[,] moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 10f, 0.03f, 1);
+            float[,] heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.06f, 4);
+            float[,] heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.04f, 2);
+            float[,] moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.03f, 1);
 
             _texture = mapGenerator.GenerateTileMap(heightMap, heatMap, moistureMap, graphics, spriteBatch, biomes);
             //Debug.WriteLine("Chunk Size:" + _texture.Bounds);
