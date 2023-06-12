@@ -6,11 +6,18 @@ using System.Diagnostics;
 using ScottPlot;
 using System.Linq;
 using System.Collections.Generic;
+using static ScottPlot.Generate;
 
 namespace Infinite_World
 {
     public class Game1 : Game
     {
+        public enum Screen
+        {
+            Title,
+            Game
+        }
+
         // TEXTURES
         Texture2D camera;
         Vector2 mapOffsets;
@@ -18,6 +25,7 @@ namespace Infinite_World
         Point windowOffset;
         Rectangle windowBounds;
         Rectangle cameraBounds;
+        SpriteFont titleFont;
 
         // MAP
         Vector2 mapDimensions;
@@ -27,7 +35,7 @@ namespace Infinite_World
         float zoom;
         float[,] heightMap, heatMap, moistureMap;
         List<Biome> biomes = new List<Biome>();
-        TerrainChunk testChunk;
+        TerrainChunk titleChunk;
         ChunkLoader chunkLoader;
         List<TerrainChunk> visibleChunks = new List<TerrainChunk> ();
         List<TerrainChunk> lastVisibleChunks = new List<TerrainChunk>();
@@ -49,6 +57,7 @@ namespace Infinite_World
         //MISC
         Random generator = new Random();
         Noise noiseGenerator = new Noise();
+        Screen currentScreen;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -62,8 +71,8 @@ namespace Infinite_World
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = 1080;
-            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1000;
+            _graphics.PreferredBackBufferWidth = 1280;
             _graphics.ApplyChanges();
 
             halfBufferWidth = _graphics.PreferredBackBufferWidth / 2;
@@ -75,15 +84,17 @@ namespace Infinite_World
             windowBounds = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             cameraBounds = new Rectangle(50, 50, _graphics.PreferredBackBufferWidth - 100, _graphics.PreferredBackBufferHeight - 100);
 
-            //Chunk Testing
-            testChunk = new TerrainChunk(new Vector2(0, 0), new Vector2(200, 100));
-
             chunkLoader = new ChunkLoader();
 
+            currentScreen = Screen.Title;
+
             noiseMapDimensions = new Vector2(300, 300);
-            Plot heightPlot = new Plot(300, 300);
-            Plot heatPlot = new Plot(300, 300);
-            Plot moisturePlot = new Plot(300, 300);
+
+            //Plots for debugging
+
+            //Plot heightPlot = new Plot(300, 300);
+            //Plot heatPlot = new Plot(300, 300);
+            //Plot moisturePlot = new Plot(300, 300);
 
             mapDimensions = noiseMapDimensions * 8;
             cameraPosition = new Vector2(600, 600);
@@ -97,27 +108,25 @@ namespace Infinite_World
 
             mapSeed = generator.Next(0, 10000);
 
+            //Noise Maps for debug
+
             heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0, 0.06f, 4);
             heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04f, 2);
             moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03f, 1);
 
-            heightPlot.AddHeatmap(FloatToDouble(heightMap));
-            heightPlot.SaveFig("heightMap.png");
-            heatPlot.AddHeatmap(FloatToDouble(heatMap));
-            heatPlot.SaveFig("heatmap.png");
-            moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
-            moisturePlot.SaveFig("moistureMap.png");
+            //Heatmaps for debug
 
-            //foreach (float value in heatMap)
-            //{
-            //    Debug.WriteLine(value);
-            //}
+            //heightPlot.AddHeatmap(FloatToDouble(heightMap));
+            //heightPlot.SaveFig("heightMap.png");
+            //heatPlot.AddHeatmap(FloatToDouble(heatMap));
+            //heatPlot.SaveFig("heatmap.png");
+            //moisturePlot.AddHeatmap(FloatToDouble(moistureMap));
+            //moisturePlot.SaveFig("moistureMap.png");
 
             biomes.Add(new Desert(new Vector3(0.3f, 0.6f, 0.0f)));
             biomes.Add(new Grassland(new Vector3(0.3f, 0.3f, 0.5f)));
             biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f)));
             biomes.Add(new Jungle(new Vector3(0.3f, 0.7f, 0.9f)));
-
 
             base.Initialize();
 
@@ -128,16 +137,17 @@ namespace Infinite_World
 
             player = new Player(camera);
 
-            //Map.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes);
+            titleChunk = new TerrainChunk(Vector2.Zero, new Vector2(300, 300));
+            titleChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
+
             visibleChunks = chunkLoader.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes, 4);
             lastVisibleChunks = visibleChunks;
-
-            testChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
-            //tileMap = Map.GenerateTileMap(heightMap, heatMap, moistureMap, _graphics.GraphicsDevice, _spriteBatch, biomes);
         }
 
         protected override void LoadContent()
         {
+            titleFont = Content.Load<SpriteFont>(@"Fonts\TitleFont");
+
             camera = Content.Load<Texture2D>(@"Camera");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -149,33 +159,15 @@ namespace Infinite_World
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            keyboardState = Keyboard.GetState();
-            mouseState = Mouse.GetState();
-
-            player.Update(mouseState);
-
-            elapsedTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            UpdateCamera();
-
-            scrollValue = mouseState.ScrollWheelValue;
-             
-            if (scrollValue != lastScrollValue)
+            switch (currentScreen)
             {
-                zoom = 1 + (scrollValue/240);
-                lastScrollValue = scrollValue;
-            }
+                case Screen.Title:
+                    UpdateTitle();
+                    break;
 
-            //Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
-            if (chunkLoader.NewChunk(cameraPosition))
-            {
-                foreach(TerrainChunk chunk in visibleChunks)
-                {
-                    chunk.Texture.Dispose();
-                }
-
-                visibleChunks = chunkLoader.Update(mapSeed, GraphicsDevice, _spriteBatch, biomes, 4, lastVisibleChunks);
-                lastVisibleChunks = visibleChunks;
+                case Screen.Game:
+                    UpdateMain(gameTime);
+                    break;
             }
 
             base.Update(gameTime);
@@ -183,32 +175,68 @@ namespace Infinite_World
 
         protected override void Draw(GameTime gameTime)
         {
-            //GraphicsDevice.SetRenderTarget(renderTarget);
-            //GraphicsDevice.Clear(Color.CornflowerBlue);
+            switch (currentScreen)
+            {
+                case Screen.Title:
+                    DrawTitle();
+                    break;
 
-            //_spriteBatch.Begin();
-
-            //_spriteBatch.Draw(tileMap, new Rectangle(offsets.ToPoint(), mapDimensions.ToPoint()), Color.White);
-
-            //_spriteBatch.End();
-
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
-            //_spriteBatch.Draw(renderTarget, new Rectangle(windowOffset, windowSize), Color.White);
-            //_spriteBatch.Draw(Map.Texture, Map.Bounds, Color.White);
-            //Map.DrawMap(_spriteBatch, mapOffsets);
-            chunkLoader.DrawMap(_spriteBatch, mapOffsets, visibleChunks);
-            player.Draw(_spriteBatch);
-            //_spriteBatch.Draw(testChunk.Texture, new Rectangle(0, 400, 800, 400), Color.White);
-
-            _spriteBatch.End();
+                case Screen.Game:
+                    DrawMain();
+                    break;
+            }
 
             base.Draw(gameTime);
         }
 
+        // Main game update loop
+        public void UpdateMain(GameTime gameTime)
+        {
+            keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
+            IsMouseVisible = false;
+
+            elapsedTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            player.Update(mouseState);
+
+            UpdateCamera();
+
+            scrollValue = mouseState.ScrollWheelValue;
+
+            if (scrollValue != lastScrollValue)
+            {
+                zoom = 1 + (scrollValue / 240);
+                lastScrollValue = scrollValue;
+            }
+
+            //Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
+            if (chunkLoader.NewChunk(cameraPosition))
+            {
+                foreach (TerrainChunk chunk in visibleChunks)
+                {
+                    chunk.Texture.Dispose();
+                }
+
+                visibleChunks = chunkLoader.Update(mapSeed, GraphicsDevice, _spriteBatch, biomes, 4, lastVisibleChunks);
+                lastVisibleChunks = visibleChunks;
+            }
+        }
+
+        // Title screen update loop
+        public void UpdateTitle()
+        {
+            keyboardState = Keyboard.GetState();
+            IsMouseVisible = true;
+
+            if (keyboardState.IsKeyDown(Keys.Enter))
+            {
+                titleChunk.Texture.Dispose();
+                currentScreen = Screen.Game;
+            }
+        }
+
+        //Handle arrow key inputs
         public void UpdateCamera()
         {
             if (keyboardState.IsKeyDown(Keys.Left))
@@ -242,6 +270,33 @@ namespace Infinite_World
             lastKeyboardState = keyboardState;
         }
 
+        // Main game drawing loop
+        public void DrawMain()
+        {
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+            chunkLoader.DrawMap(_spriteBatch, mapOffsets, visibleChunks);
+            player.Draw(_spriteBatch);
+
+            _spriteBatch.End();
+        }
+
+        // Title screen drawing loop
+        public void DrawTitle()
+        {
+            GraphicsDevice.Clear(Color.Green);
+            _spriteBatch.Begin();
+
+            titleChunk.DrawChunk(_spriteBatch);
+            _spriteBatch.DrawString(titleFont, "Infinite World", new Vector2(halfBufferWidth - (titleFont.MeasureString("Infinite World").X / 2), 100), Color.White);
+
+            _spriteBatch.End();
+        }
+
+        //For converting noise maps
         public double[,] FloatToDouble(float[,] floatArray)
         {
             int width = floatArray.GetLength(0);
