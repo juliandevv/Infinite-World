@@ -14,12 +14,15 @@ namespace Infinite_World
         private string _name;
         private Texture2D _texture;
         private Rectangle _bounds;
+        private SpriteFont _font;
+        private bool _entered = false;
 
-        public Button(string name, Texture2D texture, Rectangle bounds)
+        public Button(string name, Texture2D texture, Rectangle bounds, SpriteFont font)
         {
             _name = name;
             _texture = texture;
             _bounds = bounds;
+            _font = font;
         }
 
         public bool EnterButton(MouseState mouseState)
@@ -29,15 +32,30 @@ namespace Infinite_World
 
             if (Xpos < _bounds.X + _bounds.Width && Xpos > _bounds.X && Ypos < _bounds.Y + _bounds.Height && Ypos > _bounds.Y)
             {
+                _entered = true;
                 return true;
             }
 
+            _entered = false;
             return false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_texture, _bounds, Color.White);
+        }
+
+        public void DrawString(SpriteBatch spriteBatch)
+        {
+            if (_entered)
+            {
+                spriteBatch.DrawString(_font, _name, new Vector2(_bounds.X, _bounds.Y), Color.LightGray);
+
+            }
+            else
+            {
+                spriteBatch.DrawString(_font, _name, new Vector2(_bounds.X, _bounds.Y), Color.White);
+            }
         }
     }
 }
