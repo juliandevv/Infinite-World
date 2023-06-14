@@ -19,7 +19,7 @@ namespace Infinite_World
         }
 
         // TEXTURES
-        Texture2D camera;
+        Texture2D camera, playButtonTexture;
         Vector2 mapOffsets;
         Point windowSize;
         Point windowOffset;
@@ -50,6 +50,7 @@ namespace Infinite_World
         float elapsedTime;
         float speed;
         Player player;
+        Button playButton;
 
         // GRAPHICS
         RenderTarget2D renderTarget;
@@ -137,6 +138,8 @@ namespace Infinite_World
 
             player = new Player(camera);
 
+            playButton = new Button("Play", playButtonTexture, new Rectangle(halfBufferWidth - 150, halfBufferHeight - 150, 300, 300));
+
             titleChunk = new TerrainChunk(Vector2.Zero, new Vector2(300, 300));
             titleChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
 
@@ -147,6 +150,7 @@ namespace Infinite_World
         protected override void LoadContent()
         {
             titleFont = Content.Load<SpriteFont>(@"Fonts\TitleFont");
+            playButtonTexture = Content.Load<Texture2D>("PlayButton");
 
             camera = Content.Load<Texture2D>(@"Camera");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -227,9 +231,16 @@ namespace Infinite_World
         public void UpdateTitle()
         {
             keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
             IsMouseVisible = true;
 
             if (keyboardState.IsKeyDown(Keys.Enter))
+            {
+                titleChunk.Texture.Dispose();
+                currentScreen = Screen.Game;
+            }
+
+            if (playButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed)
             {
                 titleChunk.Texture.Dispose();
                 currentScreen = Screen.Game;
@@ -288,10 +299,11 @@ namespace Infinite_World
         public void DrawTitle()
         {
             GraphicsDevice.Clear(Color.Green);
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             titleChunk.DrawChunk(_spriteBatch);
             _spriteBatch.DrawString(titleFont, "Infinite World", new Vector2(halfBufferWidth - (titleFont.MeasureString("Infinite World").X / 2), 100), Color.White);
+            playButton.Draw(_spriteBatch);
 
             _spriteBatch.End();
         }
