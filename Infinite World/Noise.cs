@@ -13,7 +13,7 @@ namespace Infinite_World
     {
         public Noise() { }
 
-        public float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, float frequency, int octaves)
+        public float[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, float frequency, int octaves, float modifier)
         {
             float[,] noiseMap = new float[(int)dimensions.X, (int)dimensions.Y];
             FastNoiseLite noise = new FastNoiseLite();
@@ -41,7 +41,7 @@ namespace Infinite_World
                 }
             }
 
-            return Normalize(noiseMap);
+            return Normalize(noiseMap, modifier);
         }
 
         public double[,] GenerateNoiseMap(int seed, Vector2 dimensions, Vector2 offsets, double scale, double frequency, int octaves)
@@ -72,7 +72,7 @@ namespace Infinite_World
             return Normalize(noiseMap);
         }
 
-        public float[,] Normalize(float[,] noiseMap)
+        public float[,] Normalize(float[,] noiseMap, float modifier)
         {
             int width = noiseMap.GetLength(0);
             int height = noiseMap.GetLength(1);
@@ -87,7 +87,7 @@ namespace Infinite_World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseMap[x, y] = ((noiseMap[x, y] - min) / range);
+                    noiseMap[x, y] = ((noiseMap[x, y] - min) / range) * modifier;
                 }
             }
 

@@ -25,6 +25,9 @@ namespace Infinite_World
         Button playButton;
         Button settingsButton;
 
+        //SETTINGS SCREEN
+        Button plusButton, minusButton;
+
         // TEXTURES
         Texture2D camera;
         Vector2 mapOffsets;
@@ -47,6 +50,7 @@ namespace Infinite_World
         List<TerrainChunk> lastVisibleChunks = new List<TerrainChunk>();
         int halfBufferWidth;
         int halfBufferHeight;
+        static float heatModifier;
 
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
@@ -95,6 +99,7 @@ namespace Infinite_World
             currentScreen = Screen.Title;
 
             noiseMapDimensions = new Vector2(300, 300);
+            heatModifier = 1f;
 
             //Plots for debugging
 
@@ -116,9 +121,9 @@ namespace Infinite_World
 
             //Noise Maps for debug
 
-            heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0, 0.06f, 4);
-            heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04f, 2);
-            moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03f, 1);
+            heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 5.0, 0.06f, 4, 1f);
+            heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.04f, 2, heatModifier);
+            moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, noiseMapDimensions, Vector2.Zero, 10.0, 0.03f, 1, 1f);
 
             //Heatmaps for debug
 
@@ -147,11 +152,16 @@ namespace Infinite_World
             lastVisibleChunks = visibleChunks;
 
             // Title Screen
-            playButton = new Button("Play", playButtonTexture, new Rectangle(halfBufferWidth - 150, halfBufferHeight - 150, (int)titleFont.MeasureString("Play").X, (int)titleFont.MeasureString("Play").Y), titleFont);
+            playButton = new Button("Play", playButtonTexture, new Rectangle(halfBufferWidth - (int)(titleFont.MeasureString("Play").X / 2), halfBufferHeight - 150, (int)titleFont.MeasureString("Play").X, (int)titleFont.MeasureString("Play").Y), titleFont);
             settingsButton = new Button("Settings", playButtonTexture, new Rectangle(halfBufferWidth - (int)(titleFont.MeasureString("Settings").X / 2), halfBufferHeight, (int)titleFont.MeasureString("Settings").X, (int)titleFont.MeasureString("Settings").Y), titleFont);
 
             titleChunk = new TerrainChunk(Vector2.Zero, new Vector2(300, 300));
             titleChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
+
+            //Settings Screen
+            plusButton = new Button("+", playButtonTexture, new Rectangle(halfBufferWidth + 200, halfBufferHeight - 150, (int)titleFont.MeasureString("+").X, (int)titleFont.MeasureString("+").Y), titleFont);
+            minusButton = new Button("-", playButtonTexture, new Rectangle(halfBufferWidth - 200, halfBufferHeight - 150, (int)titleFont.MeasureString("-").X, (int)titleFont.MeasureString("-").Y), titleFont);
+
         }
 
         protected override void LoadContent()
@@ -170,6 +180,9 @@ namespace Infinite_World
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
 
             switch (currentScreen)
             {
@@ -212,9 +225,10 @@ namespace Infinite_World
         // Main game update loop
         public void UpdateMain(GameTime gameTime)
         {
-            keyboardState = Keyboard.GetState();
-            mouseState = Mouse.GetState();
-            IsMouseVisible = false;
+            if (IsMouseVisible == true)
+            {
+                IsMouseVisible = false;
+            }
 
             elapsedTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -246,9 +260,10 @@ namespace Infinite_World
         // Title screen update loop
         public void UpdateTitle()
         {
-            keyboardState = Keyboard.GetState();
-            mouseState = Mouse.GetState();
-            IsMouseVisible = true;
+            if (IsMouseVisible == false)
+            {
+                IsMouseVisible = true;
+            }
 
             if (keyboardState.IsKeyDown(Keys.Enter))
             {
@@ -270,10 +285,14 @@ namespace Infinite_World
 
         public void UpdateSettings()
         {
-            if (playButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed)
+            if(IsMouseVisible == false)
             {
-                titleChunk.Texture.Dispose();
-                currentScreen = Screen.Game;
+                IsMouseVisible = true;
+            }
+
+            if (plusButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed)
+            {
+                heatModifier += 1;
             }
         }
 
@@ -312,7 +331,9 @@ namespace Infinite_World
 
             titleChunk.DrawChunk(_spriteBatch);
             _spriteBatch.DrawString(titleFont, "Settings", new Vector2(halfBufferWidth - (titleFont.MeasureString("Settings").X / 2), 100), Color.White);
-            playButton.DrawString(_spriteBatch);
+            _spriteBatch.DrawString(titleFont, $"Heat: {heatModifier}", new Vector2(halfBufferWidth - (titleFont.MeasureString($"Heat: {heatModifier}").X / 2), halfBufferHeight - 150), Color.White);
+            plusButton.DrawString(_spriteBatch);
+            minusButton.DrawString(_spriteBatch);
 
             _spriteBatch.End();
         }
@@ -367,6 +388,14 @@ namespace Infinite_World
                 }
             }
             return doubleArray;
+        }
+
+        public static float Heat { get { return heatModifier; } }
+
+        public Vector2 CenterString(string text, SpriteFont font, int height)
+        {
+            Vector2 alignment = new Vector2(halfBufferWidth - (font.MeasureString(text).X / 2), height);
+            return alignment;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Infinite_World
             Texture2D texture = new Texture2D(graphics, width, height);
             Color[] colours = new Color[width * height];
 
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < width; x++) 
             {
                 for (int y = 0; y < height; y++)
                 {

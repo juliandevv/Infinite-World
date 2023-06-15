@@ -15,7 +15,7 @@ namespace Infinite_World
         private Texture2D _texture;
         private Rectangle _bounds;
         private SpriteFont _font;
-        private bool _entered = false;
+        private bool _entered;
 
         public Button(string name, Texture2D texture, Rectangle bounds, SpriteFont font)
         {
@@ -23,6 +23,7 @@ namespace Infinite_World
             _texture = texture;
             _bounds = bounds;
             _font = font;
+            _entered = false;
         }
 
         public bool EnterButton(MouseState mouseState)
