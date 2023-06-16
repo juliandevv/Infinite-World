@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+//using System.Drawing;
 
 namespace Infinite_World
 {
@@ -37,7 +38,7 @@ namespace Infinite_World
             noiseGenerator = new Noise();
 
             float[,] heightMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.06f, 4, 1f);
-            float[,] heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.04f, 2, Game1.Heat);
+            float[,] heatMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.04f, 2, Game1.Heat * 1.5f);
             float[,] moistureMap = noiseGenerator.GenerateNoiseMap(mapSeed, _chunkSize, _address * 100, 3.0, 0.03f, 1, 1f);
 
             _texture = mapGenerator.GenerateTileMap(heightMap, heatMap, moistureMap, graphics, spriteBatch, biomes);
@@ -49,7 +50,12 @@ namespace Infinite_World
 
         public void DrawChunk(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _address * 1600, Color.White);
+            DrawChunk(spriteBatch, Color.White);
+        }
+
+        public void DrawChunk(SpriteBatch spriteBatch, Color colour)
+        {
+            spriteBatch.Draw(_texture, _address * 1600, colour);
         }
 
         public RenderTarget2D Texture { get { return _texture; } }

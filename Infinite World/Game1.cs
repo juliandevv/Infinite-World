@@ -16,6 +16,7 @@ namespace Infinite_World
         {
             Title,
             Settings,
+            Pause,
             Game
         }
 
@@ -24,27 +25,24 @@ namespace Infinite_World
         Texture2D playButtonTexture, settingsButtonTexture;
         Button playButton;
         Button settingsButton;
+        TerrainChunk titleChunk;
 
         //SETTINGS SCREEN
-        Button plusButton, minusButton;
+        Button plusButton, minusButton, backButton;
+
+        //MAIN GAME
 
         // TEXTURES
         Texture2D camera;
         Vector2 mapOffsets;
-        Point windowSize;
-        Point windowOffset;
-        Rectangle windowBounds;
-        Rectangle cameraBounds;
 
         // MAP
         Vector2 mapDimensions;
         Vector2 noiseMapDimensions;
         Vector2 cameraPosition;
         int mapSeed;
-        float zoom;
         float[,] heightMap, heatMap, moistureMap;
         List<Biome> biomes = new List<Biome>();
-        TerrainChunk titleChunk;
         ChunkLoader chunkLoader;
         List<TerrainChunk> visibleChunks = new List<TerrainChunk> ();
         List<TerrainChunk> lastVisibleChunks = new List<TerrainChunk>();
@@ -55,8 +53,8 @@ namespace Infinite_World
         // INPUT
         KeyboardState keyboardState, lastKeyboardState = Keyboard.GetState();
         MouseState mouseState;
-        float lastScrollValue;
-        float scrollValue;
+        MouseState lastMouseState;
+        Button menuButton;
         float elapsedTime;
         float speed;
         Player player;
@@ -87,13 +85,7 @@ namespace Infinite_World
 
             halfBufferWidth = _graphics.PreferredBackBufferWidth / 2;
             halfBufferHeight = _graphics.PreferredBackBufferHeight / 2;
-
-            windowSize = new Point(1920, 1080); 
-            windowOffset = new Point(0, 0);
-
-            windowBounds = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
-            cameraBounds = new Rectangle(50, 50, _graphics.PreferredBackBufferWidth - 100, _graphics.PreferredBackBufferHeight - 100);
-
+            
             chunkLoader = new ChunkLoader();
 
             currentScreen = Screen.Title;
@@ -112,9 +104,6 @@ namespace Infinite_World
             mapOffsets = new Vector2(cameraPosition.X - 2400, cameraPosition.Y - 2400);
 
             //offsets = new Vector2(0, 0);
-            scrollValue = 120;
-            lastScrollValue = 0;
-            zoom = 1;
             speed = 5;
 
             mapSeed = generator.Next(0, 10000);
@@ -148,6 +137,8 @@ namespace Infinite_World
 
             player = new Player(camera);
 
+            menuButton = new Button("Return To Menu", playButtonTexture, new Rectangle(CenterString("Return To Menu", titleFont), 400, (int)titleFont.MeasureString("Return To Menu").X, (int)titleFont.MeasureString("Return To Menu").Y), titleFont);
+
             visibleChunks = chunkLoader.Initialize(_spriteBatch, GraphicsDevice, mapSeed, biomes, 4);
             lastVisibleChunks = visibleChunks;
 
@@ -160,7 +151,8 @@ namespace Infinite_World
 
             //Settings Screen
             plusButton = new Button("+", playButtonTexture, new Rectangle(halfBufferWidth + 200, halfBufferHeight - 150, (int)titleFont.MeasureString("+").X, (int)titleFont.MeasureString("+").Y), titleFont);
-            minusButton = new Button("-", playButtonTexture, new Rectangle(halfBufferWidth - 200, halfBufferHeight - 150, (int)titleFont.MeasureString("-").X, (int)titleFont.MeasureString("-").Y), titleFont);
+            minusButton = new Button("-", playButtonTexture, new Rectangle(halfBufferWidth - 220, halfBufferHeight - 150, (int)titleFont.MeasureString("-").X, (int)titleFont.MeasureString("-").Y), titleFont);
+            backButton = new Button("Back", playButtonTexture, new Rectangle(CenterString("Back", titleFont), 600, (int)titleFont.MeasureString("Back").X, (int)titleFont.MeasureString("Back").Y), titleFont);
 
         }
 
@@ -197,7 +189,13 @@ namespace Infinite_World
                 case Screen.Settings:
                     UpdateSettings();
                     break;
+
+                case Screen.Pause:
+                    UpdatePause();
+                        break;
             }
+
+            lastMouseState = mouseState;
 
             base.Update(gameTime);
         }
@@ -216,6 +214,10 @@ namespace Infinite_World
 
                 case Screen.Settings:
                     DrawSettings();
+                    break;
+
+                case Screen.Pause:
+                    DrawPause();
                     break;
             }
 
@@ -236,12 +238,9 @@ namespace Infinite_World
 
             UpdateCamera();
 
-            scrollValue = mouseState.ScrollWheelValue;
-
-            if (scrollValue != lastScrollValue)
+            if (keyboardState.IsKeyDown(Keys.Tab))
             {
-                zoom = 1 + (scrollValue / 240);
-                lastScrollValue = scrollValue;
+                currentScreen = Screen.Pause;
             }
 
             //Map.Update(cameraPosition, mapSeed, GraphicsDevice, _spriteBatch, biomes);
@@ -271,13 +270,12 @@ namespace Infinite_World
                 currentScreen = Screen.Game;
             }
 
-            if (playButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed)
+            if (playButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
             {
-                titleChunk.Texture.Dispose();
                 currentScreen = Screen.Game;
             }
 
-            else if (settingsButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed)
+            else if (settingsButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
             {
                 currentScreen = Screen.Settings;
             }
@@ -290,9 +288,38 @@ namespace Infinite_World
                 IsMouseVisible = true;
             }
 
-            if (plusButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed)
+            if (plusButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
             {
                 heatModifier += 1;
+            }
+            else if (minusButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
+            {
+                heatModifier -= 1;
+            }
+            else if (backButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
+            {
+                currentScreen = Screen.Title;
+            }
+
+            if (heatModifier < 0) { heatModifier = 0; }
+            else if (heatModifier > 9) { heatModifier = 9; }
+        }
+
+        public void UpdatePause()
+        {
+            if (IsMouseVisible == false)
+            {
+                IsMouseVisible = true;
+            }
+
+            if (backButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
+            {
+                currentScreen = Screen.Game;
+            }
+
+            else if (menuButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
+            {
+                currentScreen = Screen.Title;
             }
         }
 
@@ -306,6 +333,7 @@ namespace Infinite_World
 
             chunkLoader.DrawMap(_spriteBatch, mapOffsets, visibleChunks);
             player.Draw(_spriteBatch);
+            //pauseButton.DrawString(_spriteBatch);
 
             _spriteBatch.End();
         }
@@ -316,7 +344,7 @@ namespace Infinite_World
             GraphicsDevice.Clear(Color.Green);
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            titleChunk.DrawChunk(_spriteBatch);
+            titleChunk.DrawChunk(_spriteBatch, Color.LightGray);
             _spriteBatch.DrawString(titleFont, "Infinite World", new Vector2(halfBufferWidth - (titleFont.MeasureString("Infinite World").X / 2), 100), Color.White);
             playButton.DrawString(_spriteBatch);
             settingsButton.DrawString(_spriteBatch);
@@ -329,11 +357,26 @@ namespace Infinite_World
             GraphicsDevice.Clear(Color.Yellow);
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            titleChunk.DrawChunk(_spriteBatch);
+            titleChunk.DrawChunk(_spriteBatch, Color.LightGray);
             _spriteBatch.DrawString(titleFont, "Settings", new Vector2(halfBufferWidth - (titleFont.MeasureString("Settings").X / 2), 100), Color.White);
             _spriteBatch.DrawString(titleFont, $"Heat: {heatModifier}", new Vector2(halfBufferWidth - (titleFont.MeasureString($"Heat: {heatModifier}").X / 2), halfBufferHeight - 150), Color.White);
             plusButton.DrawString(_spriteBatch);
             minusButton.DrawString(_spriteBatch);
+            backButton.DrawString(_spriteBatch);
+
+            _spriteBatch.End();
+        }
+
+        public void DrawPause()
+        {
+            GraphicsDevice.Clear(Color.Yellow);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+            chunkLoader.DrawMap(_spriteBatch, mapOffsets, visibleChunks, Color.LightGray);
+            player.Draw(_spriteBatch);
+            _spriteBatch.DrawString(titleFont, "Game Paused", new Vector2(halfBufferWidth - (titleFont.MeasureString("Game Paused").X / 2), 100), Color.White);
+            backButton.DrawString(_spriteBatch);
+            menuButton.DrawString(_spriteBatch);
 
             _spriteBatch.End();
         }
@@ -392,9 +435,9 @@ namespace Infinite_World
 
         public static float Heat { get { return heatModifier; } }
 
-        public Vector2 CenterString(string text, SpriteFont font, int height)
+        public int CenterString(string text, SpriteFont font)
         {
-            Vector2 alignment = new Vector2(halfBufferWidth - (font.MeasureString(text).X / 2), height);
+            int alignment = (int)(halfBufferWidth - (font.MeasureString(text).X / 2));
             return alignment;
         }
     }

@@ -71,9 +71,14 @@ namespace Infinite_World
 
         public void DrawMap(SpriteBatch spritebatch, Vector2 mapOffsets, List<TerrainChunk> visibleChunks)
         {
+            DrawMap(spritebatch, mapOffsets, visibleChunks, Color.White);
+        }
+
+        public void DrawMap(SpriteBatch spritebatch, Vector2 mapOffsets, List<TerrainChunk> visibleChunks, Color colour)
+        {
             foreach (TerrainChunk chunk in visibleChunks)
             {
-                spritebatch.Draw(chunk.Texture, (chunk.Address * 1600) + mapOffsets, Color.White);
+                spritebatch.Draw(chunk.Texture, (chunk.Address * 1600) + mapOffsets, colour);
             }
         }
 
