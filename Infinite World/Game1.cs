@@ -17,14 +17,17 @@ namespace Infinite_World
             Title,
             Settings,
             Pause,
+            Help,
             Game
         }
 
         //TITLE SCREEN
         SpriteFont titleFont;
-        Texture2D playButtonTexture, settingsButtonTexture;
+        SpriteFont textFont;
+        Texture2D playButtonTexture;
         Button playButton;
         Button settingsButton;
+        Button helpButton;
         TerrainChunk titleChunk;
 
         //SETTINGS SCREEN
@@ -127,6 +130,7 @@ namespace Infinite_World
             biomes.Add(new Grassland(new Vector3(0.3f, 0.3f, 0.5f)));
             biomes.Add(new Ocean(new Vector3(0.0f, 0.0f, 0.0f)));
             biomes.Add(new Jungle(new Vector3(0.3f, 0.7f, 0.9f)));
+            //biomes.Add(new Tundra(new Vector3(0.8f, 0.0f, 0.0f)));
 
             base.Initialize();
 
@@ -143,8 +147,9 @@ namespace Infinite_World
             lastVisibleChunks = visibleChunks;
 
             // Title Screen
-            playButton = new Button("Play", playButtonTexture, new Rectangle(halfBufferWidth - (int)(titleFont.MeasureString("Play").X / 2), halfBufferHeight - 150, (int)titleFont.MeasureString("Play").X, (int)titleFont.MeasureString("Play").Y), titleFont);
-            settingsButton = new Button("Settings", playButtonTexture, new Rectangle(halfBufferWidth - (int)(titleFont.MeasureString("Settings").X / 2), halfBufferHeight, (int)titleFont.MeasureString("Settings").X, (int)titleFont.MeasureString("Settings").Y), titleFont);
+            playButton = new Button("Play", playButtonTexture, new Rectangle(CenterString("Play", titleFont), 350, (int)titleFont.MeasureString("Play").X, (int)titleFont.MeasureString("Play").Y), titleFont);
+            settingsButton = new Button("Settings", playButtonTexture, new Rectangle(CenterString("Settings", titleFont), 500, (int)titleFont.MeasureString("Settings").X, (int)titleFont.MeasureString("Settings").Y), titleFont);
+            helpButton = new Button("Help", playButtonTexture, new Rectangle(CenterString("Help", titleFont), 650, (int)titleFont.MeasureString("Help").X, (int)titleFont.MeasureString("Help").Y), titleFont);
 
             titleChunk = new TerrainChunk(Vector2.Zero, new Vector2(300, 300));
             titleChunk.LoadChunk(mapSeed, GraphicsDevice, _spriteBatch, biomes);
@@ -165,6 +170,7 @@ namespace Infinite_World
 
             // Title Screen
             titleFont = Content.Load<SpriteFont>(@"Fonts\TitleFont");
+            textFont = Content.Load<SpriteFont>(@"Fonts\Text");
             playButtonTexture = Content.Load<Texture2D>("PlayButton");
         }
 
@@ -193,6 +199,10 @@ namespace Infinite_World
                 case Screen.Pause:
                     UpdatePause();
                         break;
+
+                case Screen.Help:
+                    UpdateHelp();
+                    break;
             }
 
             lastMouseState = mouseState;
@@ -218,6 +228,10 @@ namespace Infinite_World
 
                 case Screen.Pause:
                     DrawPause();
+                    break;
+
+                case Screen.Help:
+                    DrawHelp();
                     break;
             }
 
@@ -279,6 +293,11 @@ namespace Infinite_World
             {
                 currentScreen = Screen.Settings;
             }
+
+            else if (helpButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
+            {
+                currentScreen = Screen.Help;
+            }
         }
 
         public void UpdateSettings()
@@ -301,7 +320,7 @@ namespace Infinite_World
                 currentScreen = Screen.Title;
             }
 
-            if (heatModifier < 0) { heatModifier = 0; }
+            if (heatModifier < 1) { heatModifier = 1; }
             else if (heatModifier > 9) { heatModifier = 9; }
         }
 
@@ -318,6 +337,14 @@ namespace Infinite_World
             }
 
             else if (menuButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
+            {
+                currentScreen = Screen.Title;
+            }
+        }
+
+        public void UpdateHelp()
+        {
+            if (backButton.EnterButton(mouseState) && mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
             {
                 currentScreen = Screen.Title;
             }
@@ -348,6 +375,7 @@ namespace Infinite_World
             _spriteBatch.DrawString(titleFont, "Infinite World", new Vector2(halfBufferWidth - (titleFont.MeasureString("Infinite World").X / 2), 100), Color.White);
             playButton.DrawString(_spriteBatch);
             settingsButton.DrawString(_spriteBatch);
+            helpButton.DrawString(_spriteBatch);
 
             _spriteBatch.End();
         }
@@ -381,6 +409,18 @@ namespace Infinite_World
             _spriteBatch.End();
         }
 
+        public void DrawHelp()
+        {
+            GraphicsDevice.Clear(Color.Yellow);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+            titleChunk.DrawChunk(_spriteBatch, Color.LightGray);
+            backButton.DrawString(_spriteBatch);
+            _spriteBatch.DrawString(textFont, "Welcome to Infinite world! \nThis is an infinite procedurally generated world for you to explore \nUse arrow keys to move around \nPress TAB at anytime to pause the game", new Vector2(100, 300), Color.White);
+
+            _spriteBatch.End();
+        }
+
         //Handle arrow key inputs
         public void UpdateCamera()
         {
@@ -389,26 +429,29 @@ namespace Infinite_World
                 speed += 0.0005f * elapsedTime;
                 cameraPosition.X += speed * elapsedTime;
             }
-            else if (keyboardState.IsKeyDown(Keys.Right))
+            if (keyboardState.IsKeyDown(Keys.Right))
             {
                 speed += 0.0005f * elapsedTime;
                 cameraPosition.X -= speed * elapsedTime;
             }
-            else if (keyboardState.IsKeyDown(Keys.Up))
+            if (keyboardState.IsKeyDown(Keys.Up))
             {
                 speed += 0.0005f * elapsedTime;
                 cameraPosition.Y += speed * elapsedTime;
             }
-            else if (keyboardState.IsKeyDown(Keys.Down))
+            if (keyboardState.IsKeyDown(Keys.Down))
             {
                 speed += 0.0005f * elapsedTime;
                 cameraPosition.Y -= speed * elapsedTime;
             }
-            else if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
+            if (Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right) && Keyboard.GetState().IsKeyUp(Keys.Up) && Keyboard.GetState().IsKeyUp(Keys.Down))
             {
-                speed = 0.1f;
+                speed = 0.05f;
             }
 
+            if (speed > 0.5) { speed = 0.5f; }
+
+            //mapOffsets = new Vector2(-mouseState.Position.X - 2400, -mouseState.Position.Y - 2400);
             mapOffsets = new Vector2(cameraPosition.X - 2400, cameraPosition.Y - 2400);
             //Debug.WriteLine("camerPosition: " + cameraPosition);
 

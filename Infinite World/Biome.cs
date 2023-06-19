@@ -238,4 +238,53 @@ namespace Infinite_World
             return null;
         }
     }
+    class Tundra : Biome
+    {
+        private List<Tile> _tiles = new List<Tile>();
+        private Vector3 _minValues = new Vector3();
+        private List<Feature> _features = new List<Feature>();
+
+        public Tundra(Vector3 minValues)
+        {
+            _minValues = minValues;
+        }
+
+        public override void Load(ContentManager content)
+        {
+            _tiles.Add(new Tile(new Vector2(0.0f, 1.55f), content.Load<Texture2D>(@"Tiles\TundraTile")));
+            //_tiles.Add(new Tile(new Vector2(0.27f, 1.55f), content.Load<Texture2D>(@"Tiles\ShallowWaterTile2")));
+        }
+
+        public override Vector3 MinValues { get { return _minValues; } }
+
+        public override float GetMatchValue(float heightValue, float heatValue, float moistureValue)
+        {
+            float matchValue = (heightValue - _minValues.X) + (heatValue - _minValues.Y) + (moistureValue - _minValues.Z);
+            return matchValue;
+        }
+
+        public override Tile GetTile(float heightValue)
+        {
+            foreach (Tile tile in _tiles)
+            {
+                if (tile.SatisfyCondition(heightValue))
+                {
+                    return tile;
+                }
+            }
+            return _tiles[_generator.Next(0, _tiles.Count)];
+        }
+
+        public override Feature GetFeature(float heightValue)
+        {
+            foreach (Feature feature in _features)
+            {
+                if (feature.SatisfyCondition(heightValue))
+                {
+                    return feature;
+                }
+            }
+            return null;
+        }
+    }
 }
