@@ -248,7 +248,7 @@ namespace Infinite_World
 
             elapsedTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            player.Update(mouseState);
+            player.Update(mouseState, cameraPosition);
 
             UpdateCamera();
 
